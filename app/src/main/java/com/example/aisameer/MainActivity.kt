@@ -1,4 +1,4 @@
-package com.example.aisameer
+package com.example.alsameer
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,6 +10,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,7 +55,7 @@ fun AiSameerScreen() {
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
-    // మీ AIzaSy... API Key ని ఇక్కడ పేస్ట్ చేయండి
+    // మీ AIzaSy... API Key ని ఇక్కడ ఉంచండి
     val apiKey = "YOUR_AIZASY_API_KEY_HERE"
 
     Scaffold(
@@ -61,7 +65,7 @@ fun AiSameerScreen() {
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = DarkBG),
                 navigationIcon = {
                     IconButton(onClick = { }) {
-                        Text("☰", color = Color.White, fontSize = 22.sp)
+                        Icon(Icons.Default.Menu, contentDescription = "Menu", tint = Color.White)
                     }
                 },
                 title = {
@@ -155,14 +159,13 @@ fun AiSameerScreen() {
                     modifier = Modifier
                         .weight(1f)
                         .clip(RoundedCornerShape(24.dp)),
+                    textStyle = TextStyle(color = Color.White),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedContainerColor = CardBG,
                         unfocusedContainerColor = CardBG,
                         disabledContainerColor = CardBG,
                         focusedBorderColor = Color.Transparent,
-                        unfocusedBorderColor = Color.Transparent,
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White
+                        unfocusedBorderColor = Color.Transparent
                     ),
                     singleLine = true
                 )
@@ -199,7 +202,7 @@ fun AiSameerScreen() {
                         .clip(CircleShape)
                         .background(Brush.linearGradient(listOf(BlueAI, PurpleAI)))
                 ) {
-                    Text("➔", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    Icon(Icons.Default.Send, contentDescription = "Send", tint = Color.White)
                 }
             }
         }
