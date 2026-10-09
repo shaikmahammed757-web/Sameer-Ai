@@ -16,6 +16,14 @@ class MainActivity : Activity() {
         webView.settings.javaScriptEnabled = true
         webView.settings.domStorageEnabled = true
         webView.webViewClient = WebViewClient()
+webView.webViewClient = WebViewClient()
+
+// ఇక్కడ కొత్తగా చేర్చవలసిన కోడ్:
+webView.webChromeClient = object : android.webkit.WebChromeClient() {
+    override fun onPermissionRequest(request: android.webkit.PermissionRequest) {
+        request.grant(request.resources)
+    }
+}
 
         webView.addJavascriptInterface(WebAppInterface(this), "AndroidApp")
 
