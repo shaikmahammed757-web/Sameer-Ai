@@ -52,7 +52,7 @@ fun AiSameerScreen() {
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
-    // మీ AIzaSy... API Key ని ఇక్కడ ఉంచండి
+    // మీ AIzaSy... API Key ని ఇక్కడ పేస్ట్ చేయండి
     val apiKey = "YOUR_AIZASY_API_KEY_HERE"
 
     Scaffold(
