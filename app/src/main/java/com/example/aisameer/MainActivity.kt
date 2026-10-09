@@ -55,7 +55,7 @@ fun AiSameerScreen() {
 
     val generativeModel = remember {
         GenerativeModel(
-            modelName = "gemini-1.5-flash",
+            modelName = "gemini-2.0-flash",
             apiKey = "AIzaSyAhO-cL7Wach3WIDVxwwfr-iOK88xAI_qo"
         )
     }
