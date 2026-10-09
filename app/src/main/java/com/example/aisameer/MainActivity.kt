@@ -1,7 +1,10 @@
 package com.example.aisameer
 
 import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
 
@@ -12,6 +15,9 @@ class MainActivity : Activity() {
         val webView = WebView(this)
         webView.settings.javaScriptEnabled = true
         webView.webViewClient = WebViewClient()
+
+        // ఆండ్రాయిడ్ నుండి జావాస్క్రిప్ట్‌కి కనెక్షన్ ఇస్తుంది
+        webView.addJavascriptInterface(WebAppInterface(this), "AndroidApp")
 
         val htmlContent = """
             <!DOCTYPE html>
@@ -33,16 +39,14 @@ class MainActivity : Activity() {
                         gap: 12px;
                         margin-bottom: 16px;
                     }
-                    .logo-s {
+                    .star-logo {
                         width: 44px;
                         height: 44px;
-                        background: linear-gradient(135deg, #00C6FF, #0072FF, #8E2DE2);
-                        border-radius: 12px;
+                        background: radial-gradient(circle, rgba(56,189,248,0.2) 0%, rgba(0,0,0,0) 70%);
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                        font-weight: 900;
-                        font-size: 24px;
+                        font-size: 28px;
                     }
                     .app-title { font-size: 20px; font-weight: 800; background: linear-gradient(90deg, #00D2FF, #A855F7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
                     .app-sub { font-size: 11px; color: #94A3B8; }
@@ -86,6 +90,7 @@ class MainActivity : Activity() {
                         color: #E2E8F0;
                         font-size: 12px;
                         font-weight: 600;
+                        cursor: pointer;
                     }
                     .btn-icon {
                         width: 30px;
@@ -134,6 +139,7 @@ class MainActivity : Activity() {
                         align-items: center;
                         justify-content: center;
                         color: white;
+                        cursor: pointer;
                     }
 
                     .nav-bar {
@@ -155,7 +161,7 @@ class MainActivity : Activity() {
             <body>
 
                 <div class="header">
-                    <div class="logo-s">S</div>
+                    <div class="star-logo">✨</div>
                     <div>
                         <div class="app-title">AI Sameer</div>
                         <div class="app-sub">Your Personal AI Assistant</div>
@@ -169,20 +175,32 @@ class MainActivity : Activity() {
                 </div>
 
                 <div class="grid">
-                    <div class="grid-btn"><div class="btn-icon ic-red">▶</div>Write a<br>YouTube script</div>
-                    <div class="grid-btn"><div class="btn-icon ic-purple">🖼</div>Create<br>an image</div>
-                    <div class="grid-btn"><div class="btn-icon ic-amber">📄</div>Summarize<br>a document</div>
-                    <div class="grid-btn"><div class="btn-icon ic-amber2">💡</div>Give me<br>ideas</div>
-                    <div class="grid-btn"><div class="btn-icon ic-emerald">🔤</div>Translate<br>text</div>
-                    <div class="grid-btn"><div class="btn-icon ic-blue">🔍</div>Search<br>the web</div>
+                    <div class="grid-btn" onclick="openYouTubeUpload()">
+                        <div class="btn-icon ic-red">▶</div>Write &<br>Upload YouTube
+                    </div>
+                    <div class="grid-btn">
+                        <div class="btn-icon ic-purple">🖼</div>Create<br>an image
+                    </div>
+                    <div class="grid-btn">
+                        <div class="btn-icon ic-amber">📄</div>Summarize<br>a document
+                    </div>
+                    <div class="grid-btn">
+                        <div class="btn-icon ic-amber2">💡</div>Give me<br>ideas
+                    </div>
+                    <div class="grid-btn">
+                        <div class="btn-icon ic-emerald">🔤</div>Translate<br>text
+                    </div>
+                    <div class="grid-btn">
+                        <div class="btn-icon ic-blue">🔍</div>Search<br>the web
+                    </div>
                 </div>
 
                 <div class="input-bar">
                     <span class="action-icon">🖼</span>
                     <span class="action-icon">📎</span>
-                    <input type="text" placeholder="Ask anything...">
+                    <input type="text" id="userInput" placeholder="Ask anything or YouTube topic...">
                     <span class="action-icon">🎙</span>
-                    <div class="send-circle">➔</div>
+                    <div class="send-circle" onclick="sendQuery()">➔</div>
                 </div>
 
                 <div class="nav-bar">
@@ -193,11 +211,42 @@ class MainActivity : Activity() {
                     <div class="nav-item"><div>👤</div>Profile</div>
                 </div>
 
+                <script>
+                    function openYouTubeUpload() {
+                        var topic = document.getElementById('userInput').value;
+                        if(!topic) topic = "AI Sameer Video Suggestion";
+                        // ఆండ్రాయిడ్ కోడ్‌కి పంపిస్తుంది
+                        AndroidApp.openYouTube(topic);
+                    }
+                    function sendQuery() {
+                        var val = document.getElementById('userInput').value;
+                        if(val) {
+                            alert("AI Sameer processing: " + val);
+                        }
+                    }
+                </script>
             </body>
             </html>
         """.trimIndent()
 
         webView.loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null)
         setContentView(webView)
+    }
+
+    // జావాస్క్రిప్ట్ నుండి ఇక్కడ కాల్ వస్తుంది, అప్పుడు YouTube యాప్ ఓపెన్ అవుతుంది
+    class WebAppInterface(private val activity: Activity) {
+        @JavascriptInterface
+        fun openYouTube(title: String) {
+            try {
+                // యూజర్ టైప్ చేసిన టాపిక్‌తో YouTube ని ఓపెన్ చేయడానికి ఇంటెంట్
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com"))
+                intent.setPackage("com.google.android.youtube")
+                activity.startActivity(intent)
+            } catch (e: Exception) {
+                // ఒకవేళ YouTube యాప్ లేకపోతే బ్రౌజర్‌లో ఓపెన్ అవుతుంది
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/upload"))
+                activity.startActivity(intent)
+            }
+        }
     }
 }
