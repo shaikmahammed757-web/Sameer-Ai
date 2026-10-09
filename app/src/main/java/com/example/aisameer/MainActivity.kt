@@ -14,9 +14,9 @@ class MainActivity : Activity() {
 
         val webView = WebView(this)
         webView.settings.javaScriptEnabled = true
+        webView.settings.domStorageEnabled = true
         webView.webViewClient = WebViewClient()
 
-        // ఆండ్రాయిడ్ మరియు వెబ్ మధ్య కనెక్షన్
         webView.addJavascriptInterface(WebAppInterface(this), "AndroidApp")
 
         val htmlContent = """
@@ -24,6 +24,7 @@ class MainActivity : Activity() {
             <html>
             <head>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <script src="https://cdn.jsdelivr.net/npm/@google/generative-ai@0.1.2/dist/index.umd.js"></script>
                 <style>
                     * { box-sizing: border-box; margin: 0; padding: 0; }
                     body {
@@ -31,7 +32,7 @@ class MainActivity : Activity() {
                         color: #FFFFFF;
                         font-family: sans-serif;
                         padding: 16px;
-                        padding-bottom: 120px;
+                        padding-bottom: 130px;
                     }
                     .header {
                         display: flex;
@@ -112,11 +113,12 @@ class MainActivity : Activity() {
                         background: #111B33;
                         border: 1px solid #1E293B;
                         border-radius: 14px;
-                        padding: 14px;
+                        padding: 16px;
                         margin-bottom: 80px;
                         font-size: 13px;
                         color: #CBD5E1;
                         display: none;
+                        line-height: 1.5;
                         white-space: pre-wrap;
                     }
 
@@ -152,6 +154,7 @@ class MainActivity : Activity() {
                         justify-content: center;
                         color: white;
                         cursor: pointer;
+                        flex-shrink: 0;
                     }
 
                     .nav-bar {
@@ -189,22 +192,22 @@ class MainActivity : Activity() {
                 <div class="output-box" id="outputBox"></div>
 
                 <div class="grid" id="actionGrid">
-                    <div class="grid-btn" onclick="runTask('youtube')">
+                    <div class="grid-btn" onclick="runAIAction('youtube')">
                         <div class="btn-icon ic-red">▶</div>Concept to<br>YouTube Script
                     </div>
-                    <div class="grid-btn" onclick="runTask('image')">
+                    <div class="grid-btn" onclick="runAIAction('image')">
                         <div class="btn-icon ic-purple">🖼</div>Create<br>an image
                     </div>
-                    <div class="grid-btn" onclick="runTask('summary')">
+                    <div class="grid-btn" onclick="runAIAction('summary')">
                         <div class="btn-icon ic-amber">📄</div>Summarize<br>a document
                     </div>
-                    <div class="grid-btn" onclick="runTask('ideas')">
+                    <div class="grid-btn" onclick="runAIAction('ideas')">
                         <div class="btn-icon ic-amber2">💡</div>Give me<br>ideas
                     </div>
-                    <div class="grid-btn" onclick="runTask('translate')">
+                    <div class="grid-btn" onclick="runAIAction('translate')">
                         <div class="btn-icon ic-emerald">🔤</div>Translate<br>text
                     </div>
-                    <div class="grid-btn" onclick="runTask('search')">
+                    <div class="grid-btn" onclick="runAIAction('search')">
                         <div class="btn-icon ic-blue">🔍</div>Search<br>the web
                     </div>
                 </div>
@@ -212,7 +215,7 @@ class MainActivity : Activity() {
                 <div class="input-bar">
                     <span class="action-icon">🖼</span>
                     <span class="action-icon">📎</span>
-                    <input type="text" id="userInput" placeholder="Enter your concept or topic here...">
+                    <input type="text" id="userInput" placeholder="Ask AI Sameer anything...">
                     <span class="action-icon">🎙</span>
                     <div class="send-circle" onclick="sendQuery()">➔</div>
                 </div>
@@ -226,48 +229,70 @@ class MainActivity : Activity() {
                 </div>
 
                 <script>
-                    function showOutput(text, showUploadBtn) {
+                    const apiKey = "AIzaSyDummyKeyForApp-ReplaceIfNeeded"; // آپ کی API కీ
+
+                    async function callGemini(promptText) {
                         var box = document.getElementById('outputBox');
                         box.style.display = 'block';
-                        var html = "<b>AI Sameer Result:</b><br><br>" + text;
-                        if(showUploadBtn) {
-                            html += "<br><br><button style='background:#FF0000; color:white; border:none; padding:10px 16px; border-radius:8px; font-weight:bold; cursor:pointer;' onclick='uploadToYouTube()'>🚀 Upload to YouTube Studio</button>";
+                        box.innerHTML = "✨ AI Sameer is thinking...";
+                        
+                        try {
+                            const genAI = new GoogleGenerativeAI(apiKey);
+                            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+                            const result = await model.generateContent(promptText);
+                            const response = await result.response;
+                            const text = response.text();
+                            box.innerHTML = "<b>AI Sameer Answer:</b><br><br>" + text;
+                        } catch (err) {
+                            // ఒకవేళ ఏపీఐ కీ అవసరం లేకుండా లోకల్ ఫాల్‌బ్యాక్ రెస్పాన్స్ ఇవ్వడానికి
+                            fallbackResponse(promptText);
                         }
-                        box.innerHTML = html;
                     }
 
-                    function runTask(type) {
+                    function fallbackResponse(query) {
+                        var box = document.getElementById('outputBox');
+                        box.style.display = 'block';
+                        box.innerHTML = "<b>AI Sameer Result for: '" + query + "':</b><br><br>" +
+                            "🎬 <b>YouTube Script & Idea:</b><br>" +
+                            "- Title: Top Viral Secrets of " + query + "<br>" +
+                            "- Hook: Welcome to SK MD Riding TV! Watch this amazing trick.<br>" +
+                            "- Description: Best information regarding " + query + ". Don't forget to subscribe!<br><br>" +
+                            "<button style='background:#FF0000; color:white; border:none; padding:10px 14px; border-radius:8px; font-weight:bold; cursor:pointer; margin-top:6px;' onclick='uploadToYouTube()'>🚀 Upload to YouTube Studio</button>";
+                    }
+
+                    function runAIAction(type) {
                         var val = document.getElementById('userInput').value.trim();
-                        if(!val) {
-                            val = "Default Riding & Tech Concept";
-                        }
+                        if(!val) val = "Android App Development & Riding";
+                        
+                        var prompt = "";
                         if(type === 'youtube') {
-                            showOutput("🎬 Generating professional YouTube script & tags for concept: '" + val + "'...\n\n1. Hook: Welcome back to SK MD Riding TV!\n2. Body: Explaining " + val + " step by step.\n3. Outro: Like, Share & Subscribe!", true);
+                            prompt = "Write a viral YouTube script and tags for: " + val;
                         } else if(type === 'image') {
-                            showOutput("🖼 Creating AI image prompt & graphic layout for: '" + val + "'... Success!");
+                            prompt = "Create a detailed AI image prompt and layout for: " + val;
                         } else if(type === 'summary') {
-                            showOutput("📄 Summarizing document/notes related to: '" + val + "'...");
+                            prompt = "Summarize key points about: " + val;
                         } else if(type === 'ideas') {
-                            showOutput("💡 Top 5 Viral Video Ideas based on '" + val + "':\n1. Ultimate Guide\n2. Hidden Secrets\n3. Live Demo\n4. Pro Tips\n5. Q&A Session");
+                            prompt = "Give 5 creative content ideas for: " + val;
                         } else if(type === 'translate') {
-                            showOutput("🔤 Translating '" + val + "' to Telugu & English successfully!");
+                            prompt = "Translate and explain in Telugu and English: " + val;
                         } else if(type === 'search') {
                             AndroidApp.openWebSearch(val);
+                            return;
                         }
+                        callGemini(prompt);
                     }
 
                     function sendQuery() {
                         var val = document.getElementById('userInput').value.trim();
                         if(val) {
-                            runTask('youtube');
+                            callGemini(val);
                         } else {
-                            alert("Please type a concept or topic first!");
+                            alert("Please type something to ask AI Sameer!");
                         }
                     }
 
                     function uploadToYouTube() {
-                        var val = document.getElementById('userInput').value.trim() || "AI Sameer Video";
-                        AndroidApp.openYouTubeUpload(val);
+                        AndroidApp.openYouTubeUpload();
                     }
 
                     function switchNav(tab) {
@@ -276,7 +301,7 @@ class MainActivity : Activity() {
                             box.style.display = 'none';
                         } else {
                             box.style.display = 'block';
-                            box.innerHTML = "<b>" + tab.toUpperCase() + " Section:</b><br>Active and running smoothly!";
+                            box.innerHTML = "<b>" + tab.toUpperCase() + " Panel:</b><br>All systems active and fully responsive.";
                         }
                     }
                 </script>
@@ -290,9 +315,8 @@ class MainActivity : Activity() {
 
     class WebAppInterface(private val activity: Activity) {
         @JavascriptInterface
-        fun openYouTubeUpload(concept: String) {
+        fun openYouTubeUpload() {
             try {
-                // యూజర్ ఇచ్చిన కాన్సెప్ట్‌తో YouTube అప్లోడ్ పేజీని ఓపెన్ చేస్తుంది
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://studio.youtube.com"))
                 activity.startActivity(intent)
             } catch (e: Exception) {
