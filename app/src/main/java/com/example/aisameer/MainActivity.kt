@@ -1,4 +1,4 @@
-package com.example.alsameer
+package com.example.aisameer
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -51,7 +51,7 @@ fun AiSameerScreen() {
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
-    // మీ కొత్త API Key ఇక్కడ పేస్ట్ చేయండి
+    // మీ AIzaSy... API Key ని ఇక్కడ పేస్ట్ చేయండి
     val apiKey = "YOUR_AIZASY_API_KEY_HERE"
 
     Scaffold(
@@ -184,7 +184,7 @@ fun AiSameerScreen() {
                                         apiKey = apiKey
                                     )
                                     val response = model.generateContent(userMsg)
-                                    val responseText = response.text ?: "సమాధానం రాలేదు."
+                                    val responseText = response.text ?: "సమాధానం లభించలేదు."
                                     messages.add(ChatMessage(responseText, false))
                                 } catch (e: Exception) {
                                     messages.add(ChatMessage("Error: ${e.localizedMessage}", false))
