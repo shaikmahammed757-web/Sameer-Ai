@@ -1,4 +1,4 @@
-package com.example.aisameer
+package com.example.alsameer
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -141,4 +141,3 @@ fun AiSameerScreen() {
         }
     }
 }
-
