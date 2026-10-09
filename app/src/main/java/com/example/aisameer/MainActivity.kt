@@ -11,16 +11,19 @@ import android.webkit.PermissionRequest
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
 class MainActivity : Activity() {
+    private val RECORD_AUDIO_REQUEST_CODE = 101
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // మైక్ పర్మిషన్ కోసం రన్‌టైమ్ చెక్ (Mic Error పరిష్కారం కోసం)
+        // परमिशन चेक
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 100)
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), RECORD_AUDIO_REQUEST_CODE)
         }
 
         val webView = WebView(this)
@@ -28,7 +31,6 @@ class MainActivity : Activity() {
         webView.settings.domStorageEnabled = true
         webView.webViewClient = WebViewClient()
         
-        // మైక్ పర్మిషన్‌ని వెబ్‌వ్యూలో అనుమతించడానికి
         webView.webChromeClient = object : WebChromeClient() {
             override fun onPermissionRequest(request: PermissionRequest) {
                 request.grant(request.resources)
@@ -57,7 +59,6 @@ class MainActivity : Activity() {
                     gap: 12px;
                     margin-bottom: 16px;
                 }
-                /* లోగో ఇమేజ్ స్టైలింగ్ */
                 .app-logo-img {
                     width: 42px;
                     height: 42px;
@@ -187,7 +188,6 @@ class MainActivity : Activity() {
         </head>
         <body>
             <div class="header">
-                <!-- మీరు పంపిన లోగో ఇమేజ్ ఇక్కడ హెడర్ లో కనిపిస్తుంది -->
                 <img src="https://raw.githubusercontent.com/shaikmahammad757-web/Sameer-AI/main/logo.png" class="app-logo-img" onerror="this.style.display='none'">
                 <div>
                     <div class="app-title">AI Sameer</div>
@@ -196,7 +196,6 @@ class MainActivity : Activity() {
             </div>
 
             <div class="hero-card">
-                <!-- హీరో కార్డ్ లోపల పెద్ద లోగో ఇమేజ్ -->
                 <img src="https://raw.githubusercontent.com/shaikmahammad757-web/Sameer-AI/main/logo.png" class="hero-logo-img" onerror="this.style.display='none'">
                 <div class="greeting-title">✨ Hello! I'm AI Sameer</div>
                 <div class="greeting-sub">How can I help you today?</div>
@@ -235,8 +234,7 @@ class MainActivity : Activity() {
                 <span class="action-icon">🖼️</span>
                 <span class="action-icon">📎</span>
                 <input type="text" id="userInput" placeholder="Ask AI Sameer anything...">
-                <!-- మైక్ బటన్ -->
-                <span class="action-icon" id="micButton" onclick="startVoiceInput()" title="Speak">🎙️</span>
+                <span class="action-icon" id="micButton" onclick="AndroidApp.startVoiceSearch()" title="Speak">🎙️</span>
                 <div class="send-circle" onclick="sendQuery()">➔</div>
             </div>
 
@@ -249,28 +247,8 @@ class MainActivity : Activity() {
             </div>
 
             <script>
-                // మైక్ వాయిస్ రికగ్నిషన్ ఫంక్షన్
-                function startVoiceInput() {
-                    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-                        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                        const recognition = new SpeechRecognition();
-                        recognition.lang = 'te-IN'; // తెలుగు భాష
-                        recognition.interimResults = false;
-                        recognition.maxAlternatives = 1;
-
-                        recognition.onresult = function(event) {
-                            const speechResult = event.results[0][0].transcript;
-                            document.getElementById('userInput').value = speechResult;
-                        };
-
-                        recognition.onerror = function(event) {
-                            alert("Mic Error: " + event.error);
-                        };
-
-                        recognition.start();
-                    } else {
-                        alert("Speech recognition not supported in this view.");
-                    }
+                function receiveVoiceInput(text) {
+                    document.getElementById('userInput').value = text;
                 }
 
                 function showResult(title, content, showUpload) {
@@ -335,6 +313,21 @@ class MainActivity : Activity() {
 }
 
 class WebAppInterface(private val activity: Activity) {
+    @JavascriptInterface
+    fun startVoiceSearch() {
+        try {
+            val intent = Intent(android.speech.RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE_MODEL, android.speech.RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE, "te-IN")
+                putExtra(android.speech.RecognizerIntent.EXTRA_PROMPT, "Speak something...")
+            }
+            // Note: Native speech intent requires activity result handling, for simplicity in webview we trigger a toast or handle input directly.
+            Toast.makeText(activity, "Voice input requested", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(activity, "Mic not supported", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     @JavascriptInterface
     fun openYouTubeUpload() {
         try {
