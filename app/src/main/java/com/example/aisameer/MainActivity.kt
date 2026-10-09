@@ -1,4 +1,4 @@
-package com.example.aisameer
+package com.example.alsameer
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -53,10 +53,11 @@ fun AiSameerScreen() {
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
+    // మోడల్ పేరును 'gemini-1.5-flash' కు మార్చడం జరిగింది
     val generativeModel = remember {
         GenerativeModel(
-            modelName = "gemini-2.5-flash",
-            apiKey = "AIzaSyAhO-cL7Wach3WIDVxwwfr-iOK88xAI_qo"
+            modelName = "gemini-1.5-flash",
+            apiKey = "AIzaSyAN0-ci7Mach3WIDVxvwfr-i0KB8xA1_qo"
         )
     }
 
@@ -66,7 +67,7 @@ fun AiSameerScreen() {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = DarkBG),
                 navigationIcon = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = { }) {
                         Icon(Icons.Default.Menu, contentDescription = "Menu", tint = Color.White)
                     }
                 },
@@ -75,145 +76,133 @@ fun AiSameerScreen() {
                         Box(
                             modifier = Modifier
                                 .size(38.dp)
-                                .clip(RoundedCornerShape(10.dp))
+                                .clip(CircleShape)
                                 .background(Brush.linearGradient(listOf(BlueAI, PurpleAI))),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text("S", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                            Text("S", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                         }
-                        Spacer(modifier = Modifier.width(10.dp))
+                        Spacer(modifier = Modifier.width(12.dp))
                         Column {
-                            Text("AI Sameer", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                            Text("Online • Ready to help", color = Color(0xFF4CAF50), fontSize = 11.sp)
+                            Text("Ai Sameer", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                            Text("Online • Ready to help", color = Color(0xFF4ADE80), fontSize = 12.sp)
                         }
                     }
                 }
             )
-        },
-        bottomBar = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(DarkBG)
-                    .navigationBarsPadding()
-                    .padding(horizontal = 12.dp, vertical = 8.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(28.dp))
-                        .background(CardBG)
-                        .padding(horizontal = 12.dp, vertical = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    TextField(
-                        value = inputText,
-                        onValueChange = { inputText = it },
-                        placeholder = { Text("Ask AI Sameer...", color = TextGray) },
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White
-                        ),
-                        modifier = Modifier.weight(1f)
-                    )
-
-                    IconButton(
-                        onClick = {
-                            val prompt = inputText.trim()
-                            if (prompt.isNotEmpty() && !isLoading) {
-                                messages.add(ChatMessage(prompt, isUser = true))
-                                inputText = ""
-                                isLoading = true
-
-                                scope.launch {
-                                    try {
-                                        val response = generativeModel.generateContent(prompt)
-                                        val reply = response.text ?: "క్షమించండి, సమాధానం లభించలేదు."
-                                        messages.add(ChatMessage(reply, isUser = false))
-                                    } catch (e: Exception) {
-                                        messages.add(ChatMessage("Error: ${e.localizedMessage}", isUser = false))
-                                    } finally {
-                                        isLoading = false
-                                    }
-                                }
-                            }
-                        },
-                        modifier = Modifier
-                            .size(42.dp)
-                            .clip(CircleShape)
-                            .background(Brush.linearGradient(listOf(BlueAI, PurpleAI)))
-                    ) {
-                        Icon(Icons.Default.Send, contentDescription = "Send", tint = Color.White)
-                    }
-                }
-            }
         }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(horizontal = 16.dp)
+                .padding(16.dp)
         ) {
             if (messages.isEmpty()) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("హలో! 👋", color = Color.White, fontSize = 26.sp, fontWeight = FontWeight.Bold)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text("నేను AI Sameer ని. నన్ను ఏదైనా అడగండి!", color = TextGray, fontSize = 15.sp)
+                        Text("హలో! 👋", fontSize = 28.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text("నేను Ai Sameer ని. నన్ను ఏదైనా అడగండి!", fontSize = 16.sp, color = TextGray)
                     }
                 }
             } else {
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                    contentPadding = PaddingValues(vertical = 12.dp)
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
                 ) {
                     items(messages) { msg ->
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = if (msg.isUser) Arrangement.End else Arrangement.Start
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            contentAlignment = if (msg.isUser) Alignment.CenterEnd else Alignment.CenterStart
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .widthIn(max = 280.dp)
-                                    .clip(
-                                        RoundedCornerShape(
-                                            topStart = 16.dp,
-                                            topEnd = 16.dp,
-                                            bottomStart = if (msg.isUser) 16.dp else 2.dp,
-                                            bottomEnd = if (msg.isUser) 2.dp else 16.dp
-                                        )
-                                    )
-                                    .background(
-                                        if (msg.isUser) Brush.linearGradient(listOf(BlueAI, PurpleAI))
-                                        else Brush.linearGradient(listOf(CardBG, CardBG))
-                                    )
-                                    .padding(14.dp)
+                            Surface(
+                                color = if (msg.isUser) PurpleAI else CardBG,
+                                shape = RoundedCornerShape(16.dp)
                             ) {
                                 Text(
                                     text = msg.text,
                                     color = Color.White,
+                                    modifier = Modifier.padding(12.dp),
                                     fontSize = 15.sp
                                 )
                             }
                         }
                     }
+                }
+            }
 
-                    if (isLoading) {
-                        item {
-                            Text(
-                                text = "AI Sameer ఆలోచిస్తోంది...",
-                                color = TextGray,
-                                fontSize = 13.sp,
-                                modifier = Modifier.padding(start = 8.dp)
-                            )
+            if (isLoading) {
+                LinearProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    color = PurpleAI
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                OutlinedTextField(
+                    value = inputText,
+                    onValueChange = { inputText = it },
+                    placeholder = { Text("Ask Ai Sameer...", color = TextGray) },
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(24.dp)),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = CardBG,
+                        unfocusedContainerColor = CardBG,
+                        disabledContainerColor = CardBG,
+                        focusedBorderColor = Color.Transparent,
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White
+                    ),
+                    singleLine = true
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                IconButton(
+                    onClick = {
+                        if (inputText.isNotBlank() && !isLoading) {
+                            val userMsg = inputText
+                            messages.add(ChatMessage(userMsg, true))
+                            inputText = ""
+                            isLoading = true
+
+                            scope.launch {
+                                try {
+                                    val response = generativeModel.generateContent(userMsg)
+                                    val responseText = response.text ?: "క్షమించండి, సమాధానం రాలేదు."
+                                    messages.add(ChatMessage(responseText, false))
+                                } catch (e: Exception) {
+                                    messages.add(ChatMessage("Error: ${e.localizedMessage}", false))
+                                } finally {
+                                    isLoading = false
+                                }
+                            }
                         }
-                    }
+                    },
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .background(Brush.linearGradient(listOf(BlueAI, PurpleAI)))
+                ) {
+                    Icon(Icons.Default.Send, contentDescription = "Send", tint = Color.White)
                 }
             }
         }
