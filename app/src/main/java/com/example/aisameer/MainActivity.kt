@@ -1,205 +1,203 @@
 package com.example.aisameer
 
 import android.app.Activity
-import android.graphics.Color
 import android.os.Bundle
-import android.text.InputType
-import android.view.Gravity
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.ScrollView
-import android.widget.TextView
-import org.json.JSONArray
-import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
-import java.net.HttpURLConnection
-import java.net.URL
+import android.webkit.WebView
+import android.webkit.WebViewClient
 
 class MainActivity : Activity() {
-
-    private lateinit var chatLayout: LinearLayout
-    private lateinit var inputEditText: EditText
-    private lateinit var sendButton: Button
-    private lateinit var scrollView: ScrollView
-
-    // ⚠️ మీ Google Gemini API Key ని ఇక్కడ డబుల్ కోట్స్ మధ్య ఉంచండి
-    private val apiKey = "AIzaSy123456789"
-    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Main Container
-        val mainLayout = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setBackgroundColor(Color.parseColor("#0F172A"))
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
-        }
+        val webView = WebView(this)
+        webView.settings.javaScriptEnabled = true
+        webView.webViewClient = WebViewClient()
 
-        // Title Bar
-        val titleTextView = TextView(this).apply {
-            text = "Ai Sameer"
-            textSize = 20f
-            setTextColor(Color.WHITE)
-            setBackgroundColor(Color.parseColor("#1E293B"))
-            setPadding(32, 32, 32, 32)
-            gravity = Gravity.CENTER_VERTICAL
-        }
-        mainLayout.addView(titleTextView)
+        val htmlContent = """
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <style>
+                    * { box-sizing: border-box; margin: 0; padding: 0; }
+                    body {
+                        background: linear-gradient(180deg, #050B18 0%, #0A1228 100%);
+                        color: #FFFFFF;
+                        font-family: sans-serif;
+                        padding: 16px;
+                        padding-bottom: 120px;
+                    }
+                    .header {
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        margin-bottom: 16px;
+                    }
+                    .logo-s {
+                        width: 44px;
+                        height: 44px;
+                        background: linear-gradient(135deg, #00C6FF, #0072FF, #8E2DE2);
+                        border-radius: 12px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-weight: 900;
+                        font-size: 24px;
+                    }
+                    .app-title { font-size: 20px; font-weight: 800; background: linear-gradient(90deg, #00D2FF, #A855F7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+                    .app-sub { font-size: 11px; color: #94A3B8; }
 
-        // Scrollable Chat Area
-        scrollView = ScrollView(this).apply {
-            layoutParams = LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                0,
-                1f
-            )
-        }
+                    .hero-card {
+                        background: radial-gradient(circle at center, #1E294B 0%, #0F172A 100%);
+                        border: 1px solid #1E293B;
+                        border-radius: 24px;
+                        padding: 20px;
+                        text-align: center;
+                        margin-bottom: 20px;
+                    }
+                    .robot-glow {
+                        width: 90px;
+                        height: 90px;
+                        margin: 0 auto 12px auto;
+                        background: radial-gradient(circle, rgba(56,189,248,0.3) 0%, rgba(0,0,0,0) 70%);
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 50px;
+                    }
+                    .greeting-title { font-size: 18px; font-weight: 700; color: #F8FAFC; margin-bottom: 4px; }
+                    .greeting-sub { font-size: 13px; color: #38BDF8; }
 
-        chatLayout = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(24, 24, 24, 24)
-        }
-        scrollView.addView(chatLayout)
-        mainLayout.addView(scrollView)
+                    .grid {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 10px;
+                        margin-bottom: 20px;
+                    }
+                    .grid-btn {
+                        background: #111B33;
+                        border: 1px solid #1E2D4A;
+                        border-radius: 14px;
+                        padding: 12px;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        color: #E2E8F0;
+                        font-size: 12px;
+                        font-weight: 600;
+                    }
+                    .btn-icon {
+                        width: 30px;
+                        height: 30px;
+                        border-radius: 8px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 14px;
+                    }
+                    .ic-red { background: rgba(239, 68, 68, 0.2); color: #EF4444; }
+                    .ic-purple { background: rgba(168, 85, 247, 0.2); color: #A855F7; }
+                    .ic-amber { background: rgba(245, 158, 11, 0.2); color: #F59E0B; }
+                    .ic-amber2 { background: rgba(234, 179, 8, 0.2); color: #EAB308; }
+                    .ic-emerald { background: rgba(16, 185, 129, 0.2); color: #10B981; }
+                    .ic-blue { background: rgba(59, 130, 246, 0.2); color: #3B82F6; }
 
-        // Input & Button Container
-        val inputContainer = LinearLayout(this).apply {
-            orientation = LinearLayout.HORIZONTAL
-            setPadding(16, 16, 16, 16)
-            setBackgroundColor(Color.parseColor("#1E293B"))
-        }
+                    .input-bar {
+                        position: fixed;
+                        bottom: 60px;
+                        left: 12px;
+                        right: 12px;
+                        background: #0F172A;
+                        border: 1px solid #1E293B;
+                        border-radius: 30px;
+                        padding: 8px 14px;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                    }
+                    .input-bar input {
+                        background: transparent;
+                        border: none;
+                        color: #FFF;
+                        width: 100%;
+                        outline: none;
+                        font-size: 13px;
+                    }
+                    .action-icon { color: #64748B; font-size: 18px; }
+                    .send-circle {
+                        width: 36px;
+                        height: 36px;
+                        background: linear-gradient(135deg, #00C6FF, #0072FF);
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                    }
 
-        inputEditText = EditText(this).apply {
-            hint = "Ask Ai Sameer..."
-            setHintTextColor(Color.GRAY)
-            setTextColor(Color.WHITE)
-            inputType = InputType.TYPE_CLASS_TEXT
-            layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
-        }
+                    .nav-bar {
+                        position: fixed;
+                        bottom: 0;
+                        left: 0;
+                        right: 0;
+                        background: #070D1B;
+                        border-top: 1px solid #1E293B;
+                        display: flex;
+                        justify-content: space-around;
+                        padding: 8px 0;
+                    }
+                    .nav-item { text-align: center; font-size: 10px; color: #64748B; }
+                    .nav-item.active { color: #38BDF8; font-weight: bold; }
+                    .nav-item div { font-size: 16px; margin-bottom: 2px; }
+                </style>
+            </head>
+            <body>
 
-        sendButton = Button(this).apply {
-            text = "Send"
-            setBackgroundColor(Color.parseColor("#7B1FA2"))
-            setTextColor(Color.WHITE)
-        }
+                <div class="header">
+                    <div class="logo-s">S</div>
+                    <div>
+                        <div class="app-title">AI Sameer</div>
+                        <div class="app-sub">Your Personal AI Assistant</div>
+                    </div>
+                </div>
 
-        inputContainer.addView(inputEditText)
-        inputContainer.addView(sendButton)
-        mainLayout.addView(inputContainer)
+                <div class="hero-card">
+                    <div class="robot-glow">🤖</div>
+                    <div class="greeting-title">✨ Hello! I'm AI Sameer</div>
+                    <div class="greeting-sub">How can I help you today?</div>
+                </div>
 
-        setContentView(mainLayout)
+                <div class="grid">
+                    <div class="grid-btn"><div class="btn-icon ic-red">▶</div>Write a<br>YouTube script</div>
+                    <div class="grid-btn"><div class="btn-icon ic-purple">🖼</div>Create<br>an image</div>
+                    <div class="grid-btn"><div class="btn-icon ic-amber">📄</div>Summarize<br>a document</div>
+                    <div class="grid-btn"><div class="btn-icon ic-amber2">💡</div>Give me<br>ideas</div>
+                    <div class="grid-btn"><div class="btn-icon ic-emerald">🔤</div>Translate<br>text</div>
+                    <div class="grid-btn"><div class="btn-icon ic-blue">🔍</div>Search<br>the web</div>
+                </div>
 
-        sendButton.setOnClickListener {
-            val userText = inputEditText.text.toString().trim()
-            if (userText.isNotEmpty()) {
-                addMessage(userText, isUser = true)
-                inputEditText.setText("")
-                sendMessageToGemini(userText)
-            }
-        }
-    }
+                <div class="input-bar">
+                    <span class="action-icon">🖼</span>
+                    <span class="action-icon">📎</span>
+                    <input type="text" placeholder="Ask anything...">
+                    <span class="action-icon">🎙</span>
+                    <div class="send-circle">➔</div>
+                </div>
 
-    private fun addMessage(message: String, isUser: Boolean) {
-        val textView = TextView(this).apply {
-            text = message
-            textSize = 15f
-            setTextColor(Color.WHITE)
-            setPadding(24, 16, 24, 16)
-            setBackgroundColor(
-                if (isUser) Color.parseColor("#7B1FA2") else Color.parseColor("#334155")
-            )
-        }
+                <div class="nav-bar">
+                    <div class="nav-item active"><div>🏠</div>Home</div>
+                    <div class="nav-item"><div>💬</div>Chat</div>
+                    <div class="nav-item"><div>🎛</div>Tools</div>
+                    <div class="nav-item"><div>🕒</div>History</div>
+                    <div class="nav-item"><div>👤</div>Profile</div>
+                </div>
 
-        val params = LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        ).apply {
-            gravity = if (isUser) Gravity.END else Gravity.START
-            topMargin = 12
-            bottomMargin = 12
-        }
+            </body>
+            </html>
+        """.trimIndent()
 
-        textView.layoutParams = params
-        chatLayout.addView(textView)
-
-        scrollView.post {
-            scrollView.fullScroll(View.FOCUS_DOWN)
-        }
-    }
-
-    private fun sendMessageToGemini(prompt: String) {
-        val loadingTextView = TextView(this).apply {
-            text = "Ai Sameer is thinking..."
-            textSize = 13f
-            setTextColor(Color.LTGRAY)
-            setPadding(24, 8, 24, 8)
-        }
-        chatLayout.addView(loadingTextView)
-
-        Thread {
-            val reply = fetchGeminiResponse(prompt)
-            runOnUiThread {
-                chatLayout.removeView(loadingTextView)
-                addMessage(reply, isUser = false)
-            }
-        }.start()
-    }
-
-    private fun fetchGeminiResponse(prompt: String): String {
-        return try {
-            val url = URL("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey")
-            val conn = url.openConnection() as HttpURLConnection
-            conn.requestMethod = "POST"
-            conn.setRequestProperty("Content-Type", "application/json")
-            conn.doOutput = true
-
-            val jsonBody = JSONObject().apply {
-                put("contents", JSONArray().apply {
-                    put(JSONObject().apply {
-                        put("parts", JSONArray().apply {
-                            put(JSONObject().apply {
-                                put("text", prompt)
-                            })
-                        })
-                    })
-                })
-            }
-
-            OutputStreamWriter(conn.outputStream).use { writer ->
-                writer.write(jsonBody.toString())
-                writer.flush()
-            }
-
-            if (conn.responseCode == 200) {
-                val reader = BufferedReader(InputStreamReader(conn.inputStream))
-                val response = StringBuilder()
-                var line: String?
-                while (reader.readLine().also { line = it } != null) {
-                    response.append(line)
-                }
-                reader.close()
-
-                val jsonResponse = JSONObject(response.toString())
-                jsonResponse
-                    .getJSONArray("candidates")
-                    .getJSONObject(0)
-                    .getJSONObject("content")
-                    .getJSONArray("parts")
-                    .getJSONObject(0)
-                    .getString("text")
-            } else {
-                "Error: ${conn.responseCode} - ${conn.responseMessage}"
-            }
-        } catch (e: Exception) {
-            "Error: ${e.localizedMessage}"
-        }
+        webView.loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null)
+        setContentView(webView)
     }
 }
