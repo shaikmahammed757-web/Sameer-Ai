@@ -4,20 +4,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,11 +33,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-val BlueAI = Color(0xFF1976D2)
-val PurpleAI = Color(0xFF7B1FA2)
 val DarkBG = Color(0xFF0F172A)
 val CardBG = Color(0xFF1E293B)
-val TextGray = Color(0xFF94A3B8)
+val PurpleAI = Color(0xFF7B1FA2)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,7 +45,6 @@ fun AiSameerScreen() {
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
-    // మీ AIzaSy... API Key ని ఇక్కడ పేస్ట్ చేయండి
     val apiKey = "YOUR_AIZASY_API_KEY_HERE"
 
     Scaffold(
@@ -60,29 +52,7 @@ fun AiSameerScreen() {
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = DarkBG),
-                navigationIcon = {
-                    IconButton(onClick = { }) {
-                        Text("☰", color = Color.White, fontSize = 22.sp)
-                    }
-                },
-                title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(38.dp)
-                                .clip(CircleShape)
-                                .background(Brush.linearGradient(listOf(BlueAI, PurpleAI))),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text("S", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                        }
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Column {
-                            Text("Ai Sameer", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                            Text("Online • Ready to help", color = Color(0xFF4ADE80), fontSize = 12.sp)
-                        }
-                    }
-                }
+                title = { Text("Ai Sameer", color = Color.White, fontWeight = FontWeight.Bold) }
             )
         }
     ) { innerPadding ->
@@ -92,43 +62,28 @@ fun AiSameerScreen() {
                 .padding(innerPadding)
                 .padding(16.dp)
         ) {
-            if (messages.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("హలో! 👋", fontSize = 28.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Text("నేను Ai Sameer ని. నన్ను ఏదైనా అడగండి!", fontSize = 16.sp, color = TextGray)
-                    }
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                ) {
-                    items(messages) { msg ->
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp),
-                            contentAlignment = if (msg.isUser) Alignment.CenterEnd else Alignment.CenterStart
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            ) {
+                items(messages) { msg ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        contentAlignment = if (msg.isUser) Alignment.CenterEnd else Alignment.CenterStart
+                    ) {
+                        Surface(
+                            color = if (msg.isUser) PurpleAI else CardBG,
+                            shape = RoundedCornerShape(12.dp)
                         ) {
-                            Surface(
-                                color = if (msg.isUser) PurpleAI else CardBG,
-                                shape = RoundedCornerShape(16.dp)
-                            ) {
-                                Text(
-                                    text = msg.text,
-                                    color = Color.White,
-                                    modifier = Modifier.padding(12.dp),
-                                    fontSize = 15.sp
-                                )
-                            }
+                            Text(
+                                text = msg.text,
+                                color = Color.White,
+                                modifier = Modifier.padding(12.dp),
+                                fontSize = 15.sp
+                            )
                         }
                     }
                 }
@@ -143,8 +98,6 @@ fun AiSameerScreen() {
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -152,31 +105,18 @@ fun AiSameerScreen() {
                 OutlinedTextField(
                     value = inputText,
                     onValueChange = { inputText = it },
-                    placeholder = { Text("Ask Ai Sameer...", color = TextGray) },
-                    modifier = Modifier
-                        .weight(1f)
-                        .clip(RoundedCornerShape(24.dp)),
-                    textStyle = TextStyle(color = Color.White),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = CardBG,
-                        unfocusedContainerColor = CardBG,
-                        disabledContainerColor = CardBG,
-                        focusedBorderColor = Color.Transparent,
-                        unfocusedBorderColor = Color.Transparent
-                    ),
+                    placeholder = { Text("Ask Ai Sameer...", color = Color.Gray) },
+                    modifier = Modifier.weight(1f),
                     singleLine = true
                 )
-
                 Spacer(modifier = Modifier.width(8.dp))
-
-                IconButton(
+                Button(
                     onClick = {
                         if (inputText.isNotBlank() && !isLoading) {
                             val userMsg = inputText
                             messages.add(ChatMessage(userMsg, true))
                             inputText = ""
                             isLoading = true
-
                             scope.launch {
                                 try {
                                     val model = GenerativeModel(
@@ -193,13 +133,9 @@ fun AiSameerScreen() {
                                 }
                             }
                         }
-                    },
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .background(Brush.linearGradient(listOf(BlueAI, PurpleAI)))
+                    }
                 ) {
-                    Text("➔", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    Text("Send")
                 }
             }
         }
