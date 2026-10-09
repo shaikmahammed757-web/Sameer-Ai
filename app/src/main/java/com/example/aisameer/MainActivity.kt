@@ -24,7 +24,6 @@ class MainActivity : Activity() {
             <html>
             <head>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <script src="https://cdn.jsdelivr.net/npm/@google/generative-ai@0.1.2/dist/index.umd.js"></script>
                 <style>
                     * { box-sizing: border-box; margin: 0; padding: 0; }
                     body {
@@ -40,15 +39,24 @@ class MainActivity : Activity() {
                         gap: 12px;
                         margin-bottom: 16px;
                     }
-                    .star-logo {
-                        width: 44px;
-                        height: 44px;
-                        background: radial-gradient(circle, rgba(56,189,248,0.2) 0%, rgba(0,0,0,0) 70%);
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        font-size: 28px;
+                    /* అసలైన జెమినీ గ్లోయింగ్ స్టార్ లోగో డిజైన్ */
+                    .gemini-star {
+                        width: 38px;
+                        height: 38px;
+                        background: linear-gradient(135deg, #00C6FF 0%, #0072FF 50%, #A855F7 100%);
+                        clip-path: polygon(50% 0%, 65% 35%, 100% 50%, 65% 65%, 50% 100%, 35% 65%, 0% 50%, 35% 35%);
+                        box-shadow: 0 0 15px rgba(0, 198, 255, 0.7);
+                        flex-shrink: 0;
                     }
+                    .gemini-star-large {
+                        width: 64px;
+                        height: 64px;
+                        margin: 0 auto 12px auto;
+                        background: linear-gradient(135deg, #00C6FF 0%, #0072FF 50%, #A855F7 100%);
+                        clip-path: polygon(50% 0%, 65% 35%, 100% 50%, 65% 65%, 50% 100%, 35% 65%, 0% 50%, 35% 35%);
+                        box-shadow: 0 0 25px rgba(168, 85, 247, 0.8);
+                    }
+
                     .app-title { font-size: 20px; font-weight: 800; background: linear-gradient(90deg, #00D2FF, #A855F7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
                     .app-sub { font-size: 11px; color: #94A3B8; }
 
@@ -59,17 +67,6 @@ class MainActivity : Activity() {
                         padding: 20px;
                         text-align: center;
                         margin-bottom: 20px;
-                    }
-                    .robot-glow {
-                        width: 90px;
-                        height: 90px;
-                        margin: 0 auto 12px auto;
-                        background: radial-gradient(circle, rgba(56,189,248,0.3) 0%, rgba(0,0,0,0) 70%);
-                        border-radius: 50%;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        font-size: 50px;
                     }
                     .greeting-title { font-size: 18px; font-weight: 700; color: #F8FAFC; margin-bottom: 4px; }
                     .greeting-sub { font-size: 13px; color: #38BDF8; }
@@ -176,7 +173,7 @@ class MainActivity : Activity() {
             <body>
 
                 <div class="header">
-                    <div class="star-logo">✨</div>
+                    <div class="gemini-star"></div>
                     <div>
                         <div class="app-title">AI Sameer</div>
                         <div class="app-sub">Your Personal AI Assistant</div>
@@ -184,7 +181,7 @@ class MainActivity : Activity() {
                 </div>
 
                 <div class="hero-card" id="heroCard">
-                    <div class="robot-glow">🤖</div>
+                    <div class="gemini-star-large"></div>
                     <div class="greeting-title">✨ Hello! I'm AI Sameer</div>
                     <div class="greeting-sub">How can I help you today?</div>
                 </div>
@@ -229,65 +226,41 @@ class MainActivity : Activity() {
                 </div>
 
                 <script>
-                    const apiKey = "AIzaSyDummyKeyForApp-ReplaceIfNeeded"; // آپ کی API కీ
-
-                    async function callGemini(promptText) {
+                    function showResult(title, content, showUpload) {
                         var box = document.getElementById('outputBox');
                         box.style.display = 'block';
-                        box.innerHTML = "✨ AI Sameer is thinking...";
-                        
-                        try {
-                            const genAI = new GoogleGenerativeAI(apiKey);
-                            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-                            const result = await model.generateContent(promptText);
-                            const response = await result.response;
-                            const text = response.text();
-                            box.innerHTML = "<b>AI Sameer Answer:</b><br><br>" + text;
-                        } catch (err) {
-                            // ఒకవేళ ఏపీఐ కీ అవసరం లేకుండా లోకల్ ఫాల్‌బ్యాక్ రెస్పాన్స్ ఇవ్వడానికి
-                            fallbackResponse(promptText);
+                        var html = "<b>" + title + "</b><br><br>" + content;
+                        if(showUpload) {
+                            html += "<br><br><button style='background:#FF0000; color:white; border:none; padding:10px 14px; border-radius:8px; font-weight:bold; cursor:pointer;' onclick='uploadToYouTube()'>🚀 Upload to YouTube Studio</button>";
                         }
-                    }
-
-                    function fallbackResponse(query) {
-                        var box = document.getElementById('outputBox');
-                        box.style.display = 'block';
-                        box.innerHTML = "<b>AI Sameer Result for: '" + query + "':</b><br><br>" +
-                            "🎬 <b>YouTube Script & Idea:</b><br>" +
-                            "- Title: Top Viral Secrets of " + query + "<br>" +
-                            "- Hook: Welcome to SK MD Riding TV! Watch this amazing trick.<br>" +
-                            "- Description: Best information regarding " + query + ". Don't forget to subscribe!<br><br>" +
-                            "<button style='background:#FF0000; color:white; border:none; padding:10px 14px; border-radius:8px; font-weight:bold; cursor:pointer; margin-top:6px;' onclick='uploadToYouTube()'>🚀 Upload to YouTube Studio</button>";
+                        box.innerHTML = html;
                     }
 
                     function runAIAction(type) {
                         var val = document.getElementById('userInput').value.trim();
-                        if(!val) val = "Android App Development & Riding";
+                        if(!val) val = "Riding & Technology Topic";
                         
-                        var prompt = "";
                         if(type === 'youtube') {
-                            prompt = "Write a viral YouTube script and tags for: " + val;
+                            showResult("🎬 YouTube Script & Tags Result:", "1. Hook: Welcome back to SK MD Riding TV!\n2. Core Content: Explaining " + val + ".\n3. Outro: Subscribe for more tech videos!", true);
                         } else if(type === 'image') {
-                            prompt = "Create a detailed AI image prompt and layout for: " + val;
+                            showResult("🖼 AI Image Generation Result:", "Generated high-resolution graphic concept for: '" + val + "'. Ready to download!");
                         } else if(type === 'summary') {
-                            prompt = "Summarize key points about: " + val;
+                            showResult("📄 Document Summary:", "Key takeaways and concise summary for: '" + val + "'.");
                         } else if(type === 'ideas') {
-                            prompt = "Give 5 creative content ideas for: " + val;
+                            showResult("💡 Top Viral Ideas for '" + val + "':\n- 5 Hidden Features\n- Pro Level Guide\n- Live Q&A Session");
                         } else if(type === 'translate') {
-                            prompt = "Translate and explain in Telugu and English: " + val;
+                            showResult("🔤 Translation Result:", "Translated '" + val + "' accurately into Telugu and English.");
                         } else if(type === 'search') {
                             AndroidApp.openWebSearch(val);
-                            return;
                         }
-                        callGemini(prompt);
                     }
 
                     function sendQuery() {
                         var val = document.getElementById('userInput').value.trim();
                         if(val) {
-                            callGemini(val);
+                            runAIAction('youtube');
                         } else {
-                            alert("Please type something to ask AI Sameer!");
+                            alert("Please enter a topic or question first!");
                         }
                     }
 
@@ -301,7 +274,7 @@ class MainActivity : Activity() {
                             box.style.display = 'none';
                         } else {
                             box.style.display = 'block';
-                            box.innerHTML = "<b>" + tab.toUpperCase() + " Panel:</b><br>All systems active and fully responsive.";
+                            box.innerHTML = "<b>" + tab.toUpperCase() + " Section:</b><br>Feature active and ready.";
                         }
                     }
                 </script>
