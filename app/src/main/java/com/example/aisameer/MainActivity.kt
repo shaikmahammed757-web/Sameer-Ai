@@ -1,4 +1,4 @@
-package com.example.alsameer
+package com.example.aisameer
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -45,8 +45,8 @@ fun AiSameerScreen() {
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
-    val apiKey = "YOUR_AIZASY_API_KEY_HERE"
-
+    val apiKey = "AIzaSy123456789"
+    
     Scaffold(
         containerColor = DarkBG,
         topBar = {
