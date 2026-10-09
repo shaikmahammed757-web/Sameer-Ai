@@ -51,14 +51,8 @@ fun AiSameerScreen() {
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
-    // 1. Model Name: gemini-1.5-flash
-    // 2. API Key: తప్పనిసరిగా 'AIzaSy' తో ప్రారంభమయ్యే కీ ఉంచండి
-    val generativeModel = remember {
-        GenerativeModel(
-            modelName = "gemini-1.5-flash",
-            apiKey = "YOUR_AIZASY_API_KEY_HERE"
-        )
-    }
+    // మీ కొత్త API Key ఇక్కడ పేస్ట్ చేయండి
+    val apiKey = "YOUR_AIZASY_API_KEY_HERE"
 
     Scaffold(
         containerColor = DarkBG,
@@ -185,8 +179,12 @@ fun AiSameerScreen() {
 
                             scope.launch {
                                 try {
-                                    val response = generativeModel.generateContent(userMsg)
-                                    val responseText = response.text ?: "సమాధానం లభించలేదు."
+                                    val model = GenerativeModel(
+                                        modelName = "gemini-1.5-flash",
+                                        apiKey = apiKey
+                                    )
+                                    val response = model.generateContent(userMsg)
+                                    val responseText = response.text ?: "సమాధానం రాలేదు."
                                     messages.add(ChatMessage(responseText, false))
                                 } catch (e: Exception) {
                                     messages.add(ChatMessage("Error: ${e.localizedMessage}", false))
