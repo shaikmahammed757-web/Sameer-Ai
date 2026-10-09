@@ -1,4 +1,4 @@
-package com.example.alsameer
+package com.example.aisameer
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,9 +10,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -65,7 +62,7 @@ fun AiSameerScreen() {
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = DarkBG),
                 navigationIcon = {
                     IconButton(onClick = { }) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menu", tint = Color.White)
+                        Text("☰", color = Color.White, fontSize = 22.sp)
                     }
                 },
                 title = {
@@ -202,7 +199,7 @@ fun AiSameerScreen() {
                         .clip(CircleShape)
                         .background(Brush.linearGradient(listOf(BlueAI, PurpleAI)))
                 ) {
-                    Icon(Icons.Default.Send, contentDescription = "Send", tint = Color.White)
+                    Text("➔", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }
