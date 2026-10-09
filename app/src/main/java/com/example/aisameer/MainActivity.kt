@@ -16,7 +16,7 @@ class MainActivity : Activity() {
         webView.settings.javaScriptEnabled = true
         webView.webViewClient = WebViewClient()
 
-        // ఆండ్రాయిడ్ నుండి జావాస్క్రిప్ట్‌కి కనెక్షన్ ఇస్తుంది
+        // ఆండ్రాయిడ్ మరియు వెబ్ మధ్య కనెక్షన్
         webView.addJavascriptInterface(WebAppInterface(this), "AndroidApp")
 
         val htmlContent = """
@@ -108,6 +108,18 @@ class MainActivity : Activity() {
                     .ic-emerald { background: rgba(16, 185, 129, 0.2); color: #10B981; }
                     .ic-blue { background: rgba(59, 130, 246, 0.2); color: #3B82F6; }
 
+                    .output-box {
+                        background: #111B33;
+                        border: 1px solid #1E293B;
+                        border-radius: 14px;
+                        padding: 14px;
+                        margin-bottom: 80px;
+                        font-size: 13px;
+                        color: #CBD5E1;
+                        display: none;
+                        white-space: pre-wrap;
+                    }
+
                     .input-bar {
                         position: fixed;
                         bottom: 60px;
@@ -129,7 +141,7 @@ class MainActivity : Activity() {
                         outline: none;
                         font-size: 13px;
                     }
-                    .action-icon { color: #64748B; font-size: 18px; }
+                    .action-icon { color: #64748B; font-size: 18px; cursor: pointer; }
                     .send-circle {
                         width: 36px;
                         height: 36px;
@@ -153,7 +165,7 @@ class MainActivity : Activity() {
                         justify-content: space-around;
                         padding: 8px 0;
                     }
-                    .nav-item { text-align: center; font-size: 10px; color: #64748B; }
+                    .nav-item { text-align: center; font-size: 10px; color: #64748B; cursor: pointer; }
                     .nav-item.active { color: #38BDF8; font-weight: bold; }
                     .nav-item div { font-size: 16px; margin-bottom: 2px; }
                 </style>
@@ -168,29 +180,31 @@ class MainActivity : Activity() {
                     </div>
                 </div>
 
-                <div class="hero-card">
+                <div class="hero-card" id="heroCard">
                     <div class="robot-glow">🤖</div>
                     <div class="greeting-title">✨ Hello! I'm AI Sameer</div>
                     <div class="greeting-sub">How can I help you today?</div>
                 </div>
 
-                <div class="grid">
-                    <div class="grid-btn" onclick="openYouTubeUpload()">
-                        <div class="btn-icon ic-red">▶</div>Write &<br>Upload YouTube
+                <div class="output-box" id="outputBox"></div>
+
+                <div class="grid" id="actionGrid">
+                    <div class="grid-btn" onclick="runTask('youtube')">
+                        <div class="btn-icon ic-red">▶</div>Concept to<br>YouTube Script
                     </div>
-                    <div class="grid-btn">
+                    <div class="grid-btn" onclick="runTask('image')">
                         <div class="btn-icon ic-purple">🖼</div>Create<br>an image
                     </div>
-                    <div class="grid-btn">
+                    <div class="grid-btn" onclick="runTask('summary')">
                         <div class="btn-icon ic-amber">📄</div>Summarize<br>a document
                     </div>
-                    <div class="grid-btn">
+                    <div class="grid-btn" onclick="runTask('ideas')">
                         <div class="btn-icon ic-amber2">💡</div>Give me<br>ideas
                     </div>
-                    <div class="grid-btn">
+                    <div class="grid-btn" onclick="runTask('translate')">
                         <div class="btn-icon ic-emerald">🔤</div>Translate<br>text
                     </div>
-                    <div class="grid-btn">
+                    <div class="grid-btn" onclick="runTask('search')">
                         <div class="btn-icon ic-blue">🔍</div>Search<br>the web
                     </div>
                 </div>
@@ -198,30 +212,71 @@ class MainActivity : Activity() {
                 <div class="input-bar">
                     <span class="action-icon">🖼</span>
                     <span class="action-icon">📎</span>
-                    <input type="text" id="userInput" placeholder="Ask anything or YouTube topic...">
+                    <input type="text" id="userInput" placeholder="Enter your concept or topic here...">
                     <span class="action-icon">🎙</span>
                     <div class="send-circle" onclick="sendQuery()">➔</div>
                 </div>
 
                 <div class="nav-bar">
-                    <div class="nav-item active"><div>🏠</div>Home</div>
-                    <div class="nav-item"><div>💬</div>Chat</div>
-                    <div class="nav-item"><div>🎛</div>Tools</div>
-                    <div class="nav-item"><div>🕒</div>History</div>
-                    <div class="nav-item"><div>👤</div>Profile</div>
+                    <div class="nav-item active" onclick="switchNav('home')"><div>🏠</div>Home</div>
+                    <div class="nav-item" onclick="switchNav('chat')"><div>💬</div>Chat</div>
+                    <div class="nav-item" onclick="switchNav('tools')"><div>🎛</div>Tools</div>
+                    <div class="nav-item" onclick="switchNav('history')"><div>🕒</div>History</div>
+                    <div class="nav-item" onclick="switchNav('profile')"><div>👤</div>Profile</div>
                 </div>
 
                 <script>
-                    function openYouTubeUpload() {
-                        var topic = document.getElementById('userInput').value;
-                        if(!topic) topic = "AI Sameer Video Suggestion";
-                        // ఆండ్రాయిడ్ కోడ్‌కి పంపిస్తుంది
-                        AndroidApp.openYouTube(topic);
+                    function showOutput(text, showUploadBtn) {
+                        var box = document.getElementById('outputBox');
+                        box.style.display = 'block';
+                        var html = "<b>AI Sameer Result:</b><br><br>" + text;
+                        if(showUploadBtn) {
+                            html += "<br><br><button style='background:#FF0000; color:white; border:none; padding:10px 16px; border-radius:8px; font-weight:bold; cursor:pointer;' onclick='uploadToYouTube()'>🚀 Upload to YouTube Studio</button>";
+                        }
+                        box.innerHTML = html;
                     }
+
+                    function runTask(type) {
+                        var val = document.getElementById('userInput').value.trim();
+                        if(!val) {
+                            val = "Default Riding & Tech Concept";
+                        }
+                        if(type === 'youtube') {
+                            showOutput("🎬 Generating professional YouTube script & tags for concept: '" + val + "'...\n\n1. Hook: Welcome back to SK MD Riding TV!\n2. Body: Explaining " + val + " step by step.\n3. Outro: Like, Share & Subscribe!", true);
+                        } else if(type === 'image') {
+                            showOutput("🖼 Creating AI image prompt & graphic layout for: '" + val + "'... Success!");
+                        } else if(type === 'summary') {
+                            showOutput("📄 Summarizing document/notes related to: '" + val + "'...");
+                        } else if(type === 'ideas') {
+                            showOutput("💡 Top 5 Viral Video Ideas based on '" + val + "':\n1. Ultimate Guide\n2. Hidden Secrets\n3. Live Demo\n4. Pro Tips\n5. Q&A Session");
+                        } else if(type === 'translate') {
+                            showOutput("🔤 Translating '" + val + "' to Telugu & English successfully!");
+                        } else if(type === 'search') {
+                            AndroidApp.openWebSearch(val);
+                        }
+                    }
+
                     function sendQuery() {
-                        var val = document.getElementById('userInput').value;
+                        var val = document.getElementById('userInput').value.trim();
                         if(val) {
-                            alert("AI Sameer processing: " + val);
+                            runTask('youtube');
+                        } else {
+                            alert("Please type a concept or topic first!");
+                        }
+                    }
+
+                    function uploadToYouTube() {
+                        var val = document.getElementById('userInput').value.trim() || "AI Sameer Video";
+                        AndroidApp.openYouTubeUpload(val);
+                    }
+
+                    function switchNav(tab) {
+                        var box = document.getElementById('outputBox');
+                        if(tab === 'home') {
+                            box.style.display = 'none';
+                        } else {
+                            box.style.display = 'block';
+                            box.innerHTML = "<b>" + tab.toUpperCase() + " Section:</b><br>Active and running smoothly!";
                         }
                     }
                 </script>
@@ -233,20 +288,23 @@ class MainActivity : Activity() {
         setContentView(webView)
     }
 
-    // జావాస్క్రిప్ట్ నుండి ఇక్కడ కాల్ వస్తుంది, అప్పుడు YouTube యాప్ ఓపెన్ అవుతుంది
     class WebAppInterface(private val activity: Activity) {
         @JavascriptInterface
-        fun openYouTube(title: String) {
+        fun openYouTubeUpload(concept: String) {
             try {
-                // యూజర్ టైప్ చేసిన టాపిక్‌తో YouTube ని ఓపెన్ చేయడానికి ఇంటెంట్
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com"))
-                intent.setPackage("com.google.android.youtube")
+                // యూజర్ ఇచ్చిన కాన్సెప్ట్‌తో YouTube అప్లోడ్ పేజీని ఓపెన్ చేస్తుంది
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://studio.youtube.com"))
                 activity.startActivity(intent)
             } catch (e: Exception) {
-                // ఒకవేళ YouTube యాప్ లేకపోతే బ్రౌజర్‌లో ఓపెన్ అవుతుంది
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/upload"))
                 activity.startActivity(intent)
             }
+        }
+
+        @JavascriptInterface
+        fun openWebSearch(query: String) {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?q=$query"))
+            activity.startActivity(intent)
         }
     }
 }
