@@ -10,8 +10,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -53,11 +51,12 @@ fun AiSameerScreen() {
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
-    // మోడల్ పేరును 'gemini-1.5-flash' కు మార్చడం జరిగింది
+    // 1. Model Name: gemini-1.5-flash
+    // 2. API Key: తప్పనిసరిగా 'AIzaSy' తో ప్రారంభమయ్యే కీ ఉంచండి
     val generativeModel = remember {
         GenerativeModel(
             modelName = "gemini-1.5-flash",
-            apiKey = "AIzaSyAN0-ci7Mach3WIDVxvwfr-i0KB8xA1_qo"
+            apiKey = "YOUR_AIZASY_API_KEY_HERE"
         )
     }
 
@@ -68,7 +67,7 @@ fun AiSameerScreen() {
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = DarkBG),
                 navigationIcon = {
                     IconButton(onClick = { }) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menu", tint = Color.White)
+                        Text("☰", color = Color.White, fontSize = 22.sp)
                     }
                 },
                 title = {
@@ -187,7 +186,7 @@ fun AiSameerScreen() {
                             scope.launch {
                                 try {
                                     val response = generativeModel.generateContent(userMsg)
-                                    val responseText = response.text ?: "క్షమించండి, సమాధానం రాలేదు."
+                                    val responseText = response.text ?: "సమాధానం లభించలేదు."
                                     messages.add(ChatMessage(responseText, false))
                                 } catch (e: Exception) {
                                     messages.add(ChatMessage("Error: ${e.localizedMessage}", false))
@@ -202,7 +201,7 @@ fun AiSameerScreen() {
                         .clip(CircleShape)
                         .background(Brush.linearGradient(listOf(BlueAI, PurpleAI)))
                 ) {
-                    Icon(Icons.Default.Send, contentDescription = "Send", tint = Color.White)
+                    Text("➔", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }
