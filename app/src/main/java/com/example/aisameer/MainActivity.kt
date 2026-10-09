@@ -16,8 +16,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.ai.client.generativeai.GenerativeModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONArray
+import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.io.OutputStreamWriter
+import java.net.HttpURLConnection
+import java.net.URL
 
 data class ChatMessage(val text: String, val isUser: Boolean)
 
@@ -118,19 +126,9 @@ fun AiSameerScreen() {
                             inputText = ""
                             isLoading = true
                             scope.launch {
-                                try {
-                                    val model = GenerativeModel(
-                                        modelName = "gemini-1.5-flash",
-                                        apiKey = apiKey
-                                    )
-                                    val response = model.generateContent(userMsg)
-                                    val responseText = response.text ?: "సమాధానం లభించలేదు."
-                                    messages.add(ChatMessage(responseText, false))
-                                } catch (e: Exception) {
-                                    messages.add(ChatMessage("Error: ${e.localizedMessage}", false))
-                                } finally {
-                                    isLoading = false
-                                }
+                                val responseText = fetchGeminiResponse(userMsg, apiKey)
+                                messages.add(ChatMessage(responseText, false))
+                                isLoading = false
                             }
                         }
                     }
@@ -138,6 +136,58 @@ fun AiSameerScreen() {
                     Text("Send")
                 }
             }
+        }
+    }
+}
+
+suspend fun fetchGeminiResponse(prompt: String, apiKey: String): String {
+    return withContext(Dispatchers.IO) {
+        try {
+            val url = URL("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey")
+            val conn = url.openConnection() as HttpURLConnection
+            conn.requestMethod = "POST"
+            conn.setRequestProperty("Content-Type", "application/json")
+            conn.doOutput = true
+
+            val jsonBody = JSONObject().apply {
+                put("contents", JSONArray().apply {
+                    put(JSONObject().apply {
+                        put("parts", JSONArray().apply {
+                            put(JSONObject().apply {
+                                put("text", prompt)
+                            })
+                        })
+                    })
+                })
+            }
+
+            OutputStreamWriter(conn.outputStream).use { writer ->
+                writer.write(jsonBody.toString())
+                writer.flush()
+            }
+
+            if (conn.responseCode == 200) {
+                val reader = BufferedReader(InputStreamReader(conn.inputStream))
+                val response = StringBuilder()
+                var line: String?
+                while (reader.readLine().also { line = it } != null) {
+                    response.append(line)
+                }
+                reader.close()
+
+                val jsonResponse = JSONObject(response.toString())
+                jsonResponse
+                    .getJSONArray("candidates")
+                    .getJSONObject(0)
+                    .getJSONObject("content")
+                    .getJSONArray("parts")
+                    .getJSONObject(0)
+                    .getString("text")
+            } else {
+                "Error: ${conn.responseCode} - ${conn.responseMessage}"
+            }
+        } catch (e: Exception) {
+            "Error: ${e.localizedMessage}"
         }
     }
 }
