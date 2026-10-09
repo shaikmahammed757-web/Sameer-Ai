@@ -1,25 +1,34 @@
 package com.example.aisameer
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.webkit.JavascriptInterface
+import android.webkit.PermissionRequest
+import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.webkit.WebChromeClient
-import android.webkit.PermissionRequest
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // మైక్ పర్మిషన్ కోసం రన్‌టైమ్ చెక్ (Mic Error పరిష్కారం కోసం)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 100)
+        }
 
         val webView = WebView(this)
         webView.settings.javaScriptEnabled = true
         webView.settings.domStorageEnabled = true
         webView.webViewClient = WebViewClient()
         
-        // మైక్ మరియు వెబ్ పర్మిషన్ల కోసం WebChromeClient సెట్టింగ్
+        // మైక్ పర్మిషన్‌ని వెబ్‌వ్యూలో అనుమతించడానికి
         webView.webChromeClient = object : WebChromeClient() {
             override fun onPermissionRequest(request: PermissionRequest) {
                 request.grant(request.resources)
@@ -48,21 +57,25 @@ class MainActivity : Activity() {
                     gap: 12px;
                     margin-bottom: 16px;
                 }
-                .gemini-star {
-                    width: 38px;
-                    height: 38px;
-                    background: linear-gradient(135deg, #00C6FF 0%, #0072FF 50%, #AB55F7 100%);
-                    clip-path: polygon(50% 0%, 65% 35%, 100% 50%, 65% 65%, 50% 100%, 35% 65%, 0% 50%, 35% 35%);
-                    box-shadow: 0 0 15px rgba(0, 198, 255, 0.7);
+                /* లోగో ఇమేజ్ స్టైలింగ్ */
+                .app-logo-img {
+                    width: 42px;
+                    height: 42px;
+                    border-radius: 12px;
+                    object-fit: cover;
+                    border: 1.5px solid #00C6FF;
+                    box-shadow: 0 0 10px rgba(0, 198, 255, 0.5);
                     flex-shrink: 0;
                 }
-                .gemini-star-large {
-                    width: 64px;
-                    height: 64px;
+                .hero-logo-img {
+                    width: 75px;
+                    height: 75px;
+                    border-radius: 20px;
+                    object-fit: cover;
                     margin: 0 auto 12px auto;
-                    background: linear-gradient(135deg, #00C6FF 0%, #0072FF 50%, #AB55F7 100%);
-                    clip-path: polygon(50% 0%, 65% 35%, 100% 50%, 65% 65%, 50% 100%, 35% 65%, 0% 50%, 35% 35%);
-                    box-shadow: 0 0 25px rgba(168, 85, 247, 0.8);
+                    display: block;
+                    border: 2px solid #AB55F7;
+                    box-shadow: 0 0 20px rgba(168, 85, 247, 0.7);
                 }
                 .app-title { font-size: 20px; font-weight: 800; background: linear-gradient(90deg, #00D2FF, #AB55F7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
                 .app-sub { font-size: 11px; color: #94A3B8; }
@@ -174,7 +187,8 @@ class MainActivity : Activity() {
         </head>
         <body>
             <div class="header">
-                <div class="gemini-star"></div>
+                <!-- మీరు పంపిన లోగో ఇమేజ్ ఇక్కడ హెడర్ లో కనిపిస్తుంది -->
+                <img src="https://raw.githubusercontent.com/shaikmahammad757-web/Sameer-AI/main/logo.png" class="app-logo-img" onerror="this.style.display='none'">
                 <div>
                     <div class="app-title">AI Sameer</div>
                     <div class="app-sub">Your Personal AI Assistant</div>
@@ -182,7 +196,8 @@ class MainActivity : Activity() {
             </div>
 
             <div class="hero-card">
-                <div class="gemini-star-large"></div>
+                <!-- హీరో కార్డ్ లోపల పెద్ద లోగో ఇమేజ్ -->
+                <img src="https://raw.githubusercontent.com/shaikmahammad757-web/Sameer-AI/main/logo.png" class="hero-logo-img" onerror="this.style.display='none'">
                 <div class="greeting-title">✨ Hello! I'm AI Sameer</div>
                 <div class="greeting-sub">How can I help you today?</div>
             </div>
@@ -220,7 +235,7 @@ class MainActivity : Activity() {
                 <span class="action-icon">🖼️</span>
                 <span class="action-icon">📎</span>
                 <input type="text" id="userInput" placeholder="Ask AI Sameer anything...">
-                <!-- మైక్ బటన్ మరియు గుర్తింపు -->
+                <!-- మైక్ బటన్ -->
                 <span class="action-icon" id="micButton" onclick="startVoiceInput()" title="Speak">🎙️</span>
                 <div class="send-circle" onclick="sendQuery()">➔</div>
             </div>
@@ -234,12 +249,12 @@ class MainActivity : Activity() {
             </div>
 
             <script>
-                // వాయిస్ రికగ్నిషన్ ఫంక్షన్ (మైక్ బటన్ కోసం)
+                // మైక్ వాయిస్ రికగ్నిషన్ ఫంక్షన్
                 function startVoiceInput() {
                     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
                         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                         const recognition = new SpeechRecognition();
-                        recognition.lang = 'te-IN'; // తెలుగు భాష (అవసరమైతే మార్చుకోవచ్చు)
+                        recognition.lang = 'te-IN'; // తెలుగు భాష
                         recognition.interimResults = false;
                         recognition.maxAlternatives = 1;
 
