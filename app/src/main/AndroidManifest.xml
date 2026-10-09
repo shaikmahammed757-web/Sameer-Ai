@@ -12,7 +12,7 @@
         android:theme="@android:style/Theme.Material.NoTitleBar">
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.aisameer.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
