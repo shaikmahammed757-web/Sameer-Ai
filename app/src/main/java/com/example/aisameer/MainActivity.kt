@@ -88,9 +88,14 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                 }
                 .header {
                     display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 16px;
+                }
+                .header-left {
+                    display: flex;
                     align-items: center;
                     gap: 12px;
-                    margin-bottom: 16px;
                 }
                 .app-logo-img {
                     width: 42px;
@@ -113,6 +118,91 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                 }
                 .app-title { font-size: 20px; font-weight: 800; background: linear-gradient(90deg, #00D2FF, #AB55F7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
                 .app-sub { font-size: 11px; color: #94A3B8; }
+                
+                .header-actions {
+                    display: flex;
+                    gap: 8px;
+                    align-items: center;
+                }
+                .icon-btn {
+                    background: #111833;
+                    border: 1px solid #1E2D4A;
+                    color: #38BDF8;
+                    width: 38px;
+                    height: 38px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 16px;
+                    cursor: pointer;
+                }
+
+                /* సైడ్ హిస్టరీ డ్రాయర్ (Sidebar) */
+                .sidebar {
+                    position: fixed;
+                    top: 0;
+                    left: -300px;
+                    width: 300px;
+                    height: 100%;
+                    background: #0B132B;
+                    border-right: 1px solid #1E2938;
+                    z-index: 1000;
+                    transition: 0.3s ease;
+                    padding: 20px;
+                    overflow-y: auto;
+                }
+                .sidebar.open {
+                    left: 0;
+                }
+                .sidebar-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 20px;
+                    font-size: 16px;
+                    font-weight: bold;
+                    color: #38BDF8;
+                }
+                .close-sidebar {
+                    font-size: 18px;
+                    cursor: pointer;
+                    color: #94A3B8;
+                }
+                .history-item {
+                    background: #111833;
+                    border: 1px solid #1E2D4A;
+                    padding: 10px;
+                    border-radius: 10px;
+                    margin-bottom: 8px;
+                    font-size: 12px;
+                    color: #CBD5E1;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                .history-text {
+                    cursor: pointer;
+                    flex-grow: 1;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    margin-right: 8px;
+                }
+                .delete-btn {
+                    background: rgba(239, 68, 68, 0.2);
+                    color: #EF4444;
+                    border: none;
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 11px;
+                }
+
                 .hero-card {
                     background: radial-gradient(circle at center, #1E294B 0%, #0F172A 100%);
                     border: 1px solid #1E2938;
@@ -170,17 +260,32 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                 .ic-indigo { background: rgba(99, 102, 241, 0.2); color: #6366F1; }
                 .ic-amber { background: rgba(245, 158, 11, 0.2); color: #F59E0B; }
                 
-                .output-box {
+                .chat-container {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 12px;
+                    margin-bottom: 100px;
+                }
+                .chat-bubble-user {
+                    background: #1E3A8A;
+                    color: #E2E8F0;
+                    padding: 12px 16px;
+                    border-radius: 16px 16px 4px 16px;
+                    max-width: 85%;
+                    align-self: flex-end;
+                    font-size: 13px;
+                    line-height: 1.5;
+                }
+                .chat-bubble-ai {
                     background: #111833;
                     border: 1px solid #1E2938;
-                    border-radius: 14px;
-                    padding: 16px;
-                    margin-bottom: 80px;
-                    font-size: 13px;
                     color: #CBD5E1;
-                    display: none;
+                    padding: 14px 16px;
+                    border-radius: 16px 16px 16px 4px;
+                    max-width: 90%;
+                    align-self: flex-start;
+                    font-size: 13px;
                     line-height: 1.6;
-                    white-space: pre-wrap;
                 }
                 .tts-speaker-btn {
                     background: rgba(0, 198, 255, 0.2);
@@ -191,7 +296,7 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                     font-size: 12px;
                     font-weight: bold;
                     cursor: pointer;
-                    margin-top: 10px;
+                    margin-top: 8px;
                     display: inline-flex;
                     align-items: center;
                     gap: 6px;
@@ -247,23 +352,40 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
             </style>
         </head>
         <body>
-            <div class="header">
-                <img src="https://raw.githubusercontent.com/shaikmahammad757-web/Sameer-AI/main/logo.png" class="app-logo-img" onerror="this.style.display='none'">
-                <div>
-                    <div class="app-title">AI Sameer</div>
-                    <div class="app-sub">Your Personal AI Assistant</div>
+            <!-- సైడ్ హిస్టరీ డ్రాయర్ (Sidebar with Delete options) -->
+            <div class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <span>💬 Chat History</span>
+                    <span class="close-sidebar" onclick="toggleSidebar()">✕</span>
+                </div>
+                <div id="historyList">
+                    <div style="font-size: 12px; color: #64748B;">No recent chats</div>
                 </div>
             </div>
 
-            <div class="hero-card">
+            <div class="header">
+                <div class="header-left">
+                    <img src="https://raw.githubusercontent.com/shaikmahammad757-web/Sameer-AI/main/logo.png" class="app-logo-img" onerror="this.style.display='none'">
+                    <div>
+                        <div class="app-title">AI Sameer</div>
+                        <div class="app-sub">Your Personal AI Assistant</div>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <div class="icon-btn" onclick="toggleSidebar()" title="Chat History">🕒</div>
+                    <div class="icon-btn" onclick="clearAll()" title="New Chat">✏️</div>
+                </div>
+            </div>
+
+            <div class="hero-card" id="heroCard">
                 <img src="https://raw.githubusercontent.com/shaikmahammad757-web/Sameer-AI/main/logo.png" class="hero-logo-img" onerror="this.style.display='none'">
                 <div class="greeting-title">✨ Hello! I'm AI Sameer</div>
                 <div class="greeting-sub">How can I help you today?</div>
             </div>
 
-            <div class="output-box" id="outputBox"></div>
+            <div class="chat-container" id="chatContainer"></div>
 
-            <div class="tools-container">
+            <div class="tools-container" id="toolsContainer">
                 <div class="tools-heading">⚡ AI Assistant Features & Tools</div>
                 <div class="grid" id="actionGrid">
                     <div class="grid-btn" onclick="runAIAction('youtube')">
@@ -304,6 +426,20 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
             </div>
 
             <script>
+                var chatHistoryList = [];
+
+                function toggleSidebar() {
+                    var sidebar = document.getElementById('sidebar');
+                    sidebar.classList.toggle('open');
+                }
+
+                function clearAll() {
+                    document.getElementById('userInput').value = '';
+                    document.getElementById('chatContainer').innerHTML = '';
+                    document.getElementById('heroCard').style.display = 'block';
+                    document.getElementById('toolsContainer').style.display = 'block';
+                }
+
                 function setVoiceResult(text) {
                     document.getElementById('userInput').value = text;
                     sendQuery();
@@ -312,137 +448,33 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                 function handleFileSelect(event) {
                     var file = event.target.files[0];
                     if (file) {
-                        document.getElementById('userInput').value = "Image: " + file.name;
-                        showResult("AI Image Analysis", "Loaded " + file.name + ". AI analysis completed successfully for your project.", true);
+                        var fileName = "Image: " + file.name;
+                        appendChat(fileName, "ఈ ఫోటో మీ SK MD Riding TV ప్రాజెక్ట్ కోసం విజయవంతంగా లోడ్ చేయబడింది. దీనిలోని విజువల్స్ పర్ఫెక్ట్‌గా ఉన్నాయి!");
+                        document.getElementById('userInput').value = '';
                     }
                 }
 
-                function showResult(title, content, showUpload) {
-                    var box = document.getElementById('outputBox');
-                    box.style.display = 'block';
-                    var html = "<b>" + title + "</b><br><br>" + content;
-                    html += "<br><br><button class='tts-speaker-btn' onclick='AndroidApp.speakText(\"" + content.replace(/"/g, '') + "\")'>🔊 Listen</button>";
-                    
-                    if(showUpload) {
-                        html += "<br><br><button onclick='uploadToYouTube()' style='background:#FF0000; color:white; border:none; padding:10px 16px; border-radius:8px; font-weight:bold; cursor:pointer;'>🚀 Upload / Test Video</button>";
+                function updateHistoryUI() {
+                    var listDiv = document.getElementById('historyList');
+                    if (chatHistoryList.length === 0) {
+                        listDiv.innerHTML = "<div style='font-size: 12px; color: #64748B;'>No recent chats</div>";
+                        return;
                     }
-                    box.innerHTML = html;
-                    AndroidApp.speakText(content);
-                }
-
-                function runAIAction(type) {
-                    var val = document.getElementById('userInput').value.trim();
-                    if(!val) val = "SK MD Riding TV Project";
-
-                    if(type === 'youtube') {
-                        showResult("YouTube Script", "Hook: Welcome to SK MD Riding TV! Core: Explaining " + val + ". Outro: Subscribe now!", true);
-                    } else if(type === 'txt2img') {
-                        showResult("Text to Image", "Generated AI graphic concept for: " + val + " successfully inside AI Sameer.");
-                    } else if(type === 'txt2vid') {
-                        showResult("Text to Video", "Generated cinematic video model for: " + val + " ready for your channel.", true);
-                    } else if(type === 'summary') {
-                        showResult("Document Summary", "Summary and key takeaways generated for: " + val);
-                    } else {
-                        showResult("AI Assistant", "Answer for query: " + val);
+                    var html = "";
+                    for(var i=0; i<chatHistoryList.length; i++) {
+                        html += "<div class='history-item'>";
+                        html += "<span class='history-text' onclick='loadHistoryItem(\"" + chatHistoryList[i] + "\")'>💬 " + chatHistoryList[i] + "</span>";
+                        html += "<button class='delete-btn' onclick='deleteHistoryItem(" + i + ")' title='Delete'>✕</button>";
+                        html += "</div>";
                     }
+                    listDiv.innerHTML = html;
                 }
 
-                function sendQuery() {
-                    var val = document.getElementById('userInput').value.trim();
-                    if(val) {
-                        runAIAction('search');
-                    } else {
-                        alert("Please enter a text first!");
-                    }
+                function addHistory(query) {
+                    chatHistoryList.unshift(query);
+                    updateHistoryUI();
                 }
 
-                function uploadToYouTube() {
-                    AndroidApp.openYouTubeUpload();
-                }
-
-                function switchNav(tab) {
-                    var box = document.getElementById('outputBox');
-                    if(tab === 'home') {
-                        box.style.display = 'none';
-                    } else {
-                        box.style.display = 'block';
-                        box.innerHTML = "<b>" + tab.toUpperCase() + " Section:</b><br><br>Ready.";
-                    }
-                }
-            </script>
-        </body>
-        </html>
-        """.trimIndent()
-
-        webView.loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null)
-        setContentView(webView)
-    }
-
-    override fun onInit(status: Int) {
-        if (status == TextToSpeech.SUCCESS) {
-            tts?.language = Locale("te", "IN")
-        }
-    }
-
-    class WebAppInterface(private val activity: MainActivity) {
-        @JavascriptInterface
-        fun startVoiceInput() {
-            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-                putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-                putExtra(RecognizerIntent.EXTRA_LANGUAGE, "te-IN")
-                putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now...")
-            }
-            try {
-                activity.startActivityForResult(intent, activity.SPEECH_REQUEST_CODE)
-            } catch (e: Exception) {
-                activity.runOnUiThread {
-                    Toast.makeText(activity, "Speech recognition not supported", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-
-        @JavascriptInterface
-        fun speakText(text: String) {
-            activity.tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
-        }
-
-        @JavascriptInterface
-        fun openYouTubeUpload() {
-            try {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://studio.youtube.com"))
-                activity.startActivity(intent)
-            } catch (e: Exception) {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/upload"))
-                activity.startActivity(intent)
-            }
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
-            val results = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
-            val spokenText = results?.get(0) ?: ""
-            if (spokenText.isNotEmpty()) {
-                webViewInstance?.post {
-                    webViewInstance?.evaluateJavascript("setVoiceResult('$spokenText');", null)
-                }
-            }
-        } else if (requestCode == FILE_CHOOSER_REQUEST_CODE) {
-            if (uploadMessage == null) return
-            val results = if (resultCode == RESULT_OK && data != null) {
-                arrayOf(data.data!!)
-            } else {
-                null
-            }
-            uploadMessage?.onReceiveValue(results)
-            uploadMessage = null
-        }
-    }
-
-    override fun onDestroy() {
-        tts?.stop()
-        tts?.shutdown()
-        super.onDestroy()
-    }
-}
+                function deleteHistoryItem(index) {
+                    chatHistoryList.splice(index, 1);
+         
