@@ -148,6 +148,7 @@
             border-radius: 35px;
             width: 100%;
             box-sizing: border-box;
+            gap: 10px;
         }
         .plus-btn {
             background: transparent;
@@ -155,9 +156,9 @@
             color: #ffffff;
             font-size: 24px;
             cursor: pointer;
-            margin-right: 12px;
             display: flex;
             align-items: center;
+            flex-shrink: 0;
         }
         .input-box input {
             flex: 1;
@@ -166,6 +167,7 @@
             color: white;
             font-size: 16px;
             outline: none;
+            min-width: 0;
         }
         .input-box input::placeholder {
             color: #94a3b8;
@@ -174,6 +176,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            flex-shrink: 0;
         }
         .mic-btn, .send-btn {
             background: transparent;
@@ -185,7 +188,6 @@
             display: flex;
             align-items: center;
         }
-        /* Voice listening active indicator effect */
         .mic-btn.listening {
             color: #4285F4;
             animation: pulse 1.5s infinite;
@@ -390,7 +392,7 @@
                 <input type="text" id="userInput" placeholder="Ask Ai Sameer" onkeypress="handleKeyPress(event)">
                 <div class="action-btns">
                     <button class="mic-btn" id="micBtn" onclick="startVoiceRecognition()" title="Voice Input">🎤</button>
-                    <button class="send-btn" onclick="sendMessage()">➤</button>
+                    <button class="send-btn" onclick="sendMessage()" title="Send">➤</button>
                 </div>
             </div>
         </div>
@@ -512,7 +514,7 @@
                 
                 recognition.onerror = function(event) {
                     micBtn.classList.remove('listening');
-                    const spokenText = prompt("మైక్ పర్మిషన్ అందుబాటులో లేదు. మీ సందేశాన్ని ఇక్కడ టైప్ చేయండి:");
+                    const spokenText = prompt("మైక్ పర్మిషన్ సమస్య ఉంది. మీ సందేశాన్ని ఇక్కడ టైప్ చేయండి:");
                     if (spokenText) {
                         document.getElementById('userInput').value = spokenText;
                     }
