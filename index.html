@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="te">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -151,7 +151,7 @@
 
     <!-- Bottom Input Bar -->
     <div class="input-bar-wrapper">
-        1   <div class="input-bar">
+        <div class="input-bar">
             <button class="plus-btn" id="plusBtn">+</button>
             <input type="text" class="text-input" id="userInput" placeholder="Ask Ai Sameer...">
             <button class="mic-btn" id="micBtn" title="Voice Input">🎙️</button>
@@ -295,11 +295,11 @@
             }
         });
 
-        // Fixed Speech Recognition (Microphone Feature)
+        // Robust Speech Recognition Implementation
         micBtn.addEventListener('click', () => {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
-                alert('Speech recognition is not supported on this browser/device. Please use Google Chrome.');
+                alert('Speech recognition is not supported in this browser. Please use Google Chrome on Android or Desktop.');
                 return;
             }
 
@@ -312,8 +312,6 @@
                 micBtn.style.color = '#3b82f6';
                 userInput.placeholder = "వింటున్నాను మాట్లాడండి... (Listening...)";
 
-                recognition.start();
-
                 recognition.onresult = function(event) {
                     const speechText = event.results[0][0].transcript;
                     userInput.value = speechText;
@@ -325,6 +323,7 @@
                 };
 
                 recognition.onerror = function(event) {
+                    console.error('Speech recognition error', event.error);
                     micBtn.style.color = '#cbd5e1';
                     userInput.placeholder = "Ask Ai Sameer...";
                 };
@@ -333,10 +332,13 @@
                     micBtn.style.color = '#cbd5e1';
                     userInput.placeholder = "Ask Ai Sameer...";
                 };
-            } catch (error) {
+
+                recognition.start();
+            } catch (err) {
+                console.error(err);
                 micBtn.style.color = '#cbd5e1';
                 userInput.placeholder = "Ask Ai Sameer...";
-                alert('Microphone access error. Please check permissions.');
+                alert('Please allow microphone permissions in your browser settings.');
             }
         });
 
