@@ -541,6 +541,7 @@
                 const spokenText = prompt("దయచేసి మీ సందేశాన్ని ఇక్కడ టైప్ చేయండి:");
                 if (spokenText) {
                     document.getElementById('userInput').value = spokenText;
+                    sendMessage();
                 }
                 return;
             }
@@ -557,7 +558,7 @@
                 recognition.onresult = function(event) {
                     document.getElementById('userInput').value = event.results[0][0].transcript;
                     micBtn.classList.remove('listening');
-                    sendMessage(); // Auto send message when voice recognition finishes
+                    sendMessage();
                 };
                 
                 recognition.onerror = function(event) {
@@ -565,4 +566,4 @@
                 };
 
                 recognition.onend = function() {
-         
+                    micBtn.
