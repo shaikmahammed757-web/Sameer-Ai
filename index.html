@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ai Sameer Pro</title>
+    <title>Ai Sameer</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0b0f19">
     <style>
@@ -114,7 +114,7 @@
         .ai-actions-bar {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 16px;
             margin-top: 8px;
             padding-left: 4px;
         }
@@ -123,16 +123,14 @@
             border: none;
             color: #94a3b8;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 18px;
             padding: 4px;
             display: flex;
             align-items: center;
+            transition: color 0.2s;
         }
         .ai-action-btn:hover {
             color: #ffffff;
-        }
-        .ai-actions-bar .audio-btn {
-            margin-left: auto;
         }
         .input-box-wrapper {
             position: relative;
@@ -186,6 +184,16 @@
             padding: 5px;
             display: flex;
             align-items: center;
+        }
+        /* Voice listening active indicator effect */
+        .mic-btn.listening {
+            color: #4285F4;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
         }
         .plus-popup {
             display: none;
@@ -381,7 +389,7 @@
                 <button class="plus-btn" onclick="togglePlusMenu(event)">＋</button>
                 <input type="text" id="userInput" placeholder="Ask Ai Sameer" onkeypress="handleKeyPress(event)">
                 <div class="action-btns">
-                    <button class="mic-btn" onclick="startVoiceRecognition()" title="Voice Input">🎤</button>
+                    <button class="mic-btn" id="micBtn" onclick="startVoiceRecognition()" title="Voice Input">🎤</button>
                     <button class="send-btn" onclick="sendMessage()">➤</button>
                 </div>
             </div>
@@ -467,8 +475,7 @@
                     <button class="ai-action-btn" title="Bad response" onclick="alert('Feedback recorded: Unhelpful')">👎</button>
                     <button class="ai-action-btn" title="Modify or retry" onclick="alert('Retrying response...')">🔄</button>
                     <button class="ai-action-btn" title="Copy text" onclick="navigator.clipboard.writeText('${responseText}').then(()=>alert('Copied to clipboard!'))">📋</button>
-                    <button class="ai-action-btn" title="More options" onclick="alert('More options')">⋯</button>
-                    <button class="ai-action-btn audio-btn" title="Listen" onclick="alert('Playing audio speech...')">🔊</button>
+                    <button class="ai-action-btn" title="Listen audio" onclick="alert('Playing audio speech...')">🔊</button>
                 `;
                 aiWrapper.appendChild(actionsBar);
 
@@ -479,6 +486,8 @@
 
         function startVoiceRecognition() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const micBtn = document.getElementById('micBtn');
+
             if (!SpeechRecognition) {
                 const spokenText = prompt("మైక్ సపోర్ట్ లేదు. మీ సందేశాన్ని ఇక్కడ టైప్ చేయండి:");
                 if (spokenText) {
@@ -492,19 +501,30 @@
                 recognition.lang = 'te-IN';
                 recognition.interimResults = false;
                 
+                recognition.onstart = function() {
+                    micBtn.classList.add('listening');
+                };
+
                 recognition.onresult = function(event) {
                     document.getElementById('userInput').value = event.results[0][0].transcript;
+                    micBtn.classList.remove('listening');
                 };
                 
                 recognition.onerror = function(event) {
-                    const spokenText = prompt("మైక్ పర్మిషన్ సమస్య ఉంది. మీ సందేశాన్ని ఇక్కడ టైప్ చేయండి:");
+                    micBtn.classList.remove('listening');
+                    const spokenText = prompt("మైక్ పర్మిషన్ అందుబాటులో లేదు. మీ సందేశాన్ని ఇక్కడ టైప్ చేయండి:");
                     if (spokenText) {
                         document.getElementById('userInput').value = spokenText;
                     }
                 };
+
+                recognition.onend = function() {
+                    micBtn.classList.remove('listening');
+                };
                 
                 recognition.start();
             } catch (e) {
+                micBtn.classList.remove('listening');
                 const spokenText = prompt("మీ సందేశాన్ని ఇక్కడ టైప్ చేయండి:");
                 if (spokenText) {
                     document.getElementById('userInput').value = spokenText;
