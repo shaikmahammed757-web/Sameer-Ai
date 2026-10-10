@@ -21,8 +21,9 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px;
+            padding: 12px 15px;
             background-color: #0b0f19;
+            flex-shrink: 0;
         }
         .menu-btn, .top-icon-btn {
             background: transparent;
@@ -39,27 +40,35 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
             text-align: center;
-            padding: 20px;
+            padding: 10px 15px;
             overflow-y: auto;
             position: relative;
         }
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
+            margin: auto 0;
+        }
         .logo-icon {
-            font-size: 32px;
-            margin-bottom: 10px;
+            font-size: 28px;
+            margin-bottom: 5px;
         }
         h2 {
             margin-top: 0;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
             font-weight: 400;
-            font-size: 26px;
+            font-size: 24px;
         }
         .features-grid {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 15px;
             flex-wrap: wrap;
             justify-content: center;
         }
@@ -67,40 +76,41 @@
             background-color: #1e293b;
             border: none;
             color: white;
-            padding: 10px 18px;
+            padding: 8px 16px;
             border-radius: 20px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
         }
         .feature-list {
             width: 100%;
-            max-width: 450px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            margin-bottom: 20px;
+            gap: 6px;
+            margin-bottom: 10px;
         }
         .list-item {
             background-color: #161b22;
             border: 1px solid #30363d;
-            padding: 10px 15px;
+            padding: 8px 12px;
             border-radius: 12px;
             text-align: left;
             cursor: pointer;
         }
         .list-item strong {
             display: block;
-            font-size: 14px;
+            font-size: 13px;
         }
         .list-item small {
             color: #8b949e;
-            font-size: 12px;
+            font-size: 11px;
         }
+        /* Input Box positioned perfectly at the bottom */
         .input-box-wrapper {
             position: relative;
-            width: 90%;
+            width: 100%;
             max-width: 600px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
+            flex-shrink: 0;
         }
         .input-box {
             display: flex;
@@ -116,7 +126,7 @@
             background: transparent;
             border: none;
             color: #ffffff;
-            font-size: 24px;
+            font-size: 22px;
             cursor: pointer;
             margin-right: 12px;
         }
@@ -125,7 +135,7 @@
             background: transparent;
             border: none;
             color: white;
-            font-size: 16px;
+            font-size: 15px;
             outline: none;
         }
         .action-btns {
@@ -138,31 +148,39 @@
             border: none;
             color: #ffffff;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 17px;
             padding: 5px;
         }
+        /* Popup Menu */
         .plus-popup {
             display: none;
             position: absolute;
             bottom: 60px;
             left: 0;
-            background-color: #161b22;
+            background-color: #1a2234;
             border: 1px solid #30363d;
             border-radius: 16px;
-            width: 230px;
-            box-shadow: 0px 8px 24px rgba(0,0,0,0.6);
+            width: 220px;
+            box-shadow: 0px 10px 30px rgba(0,0,0,0.7);
             z-index: 1000;
             text-align: left;
+            overflow: hidden;
         }
         .plus-popup.active {
             display: block;
         }
         .popup-item {
-            padding: 12px 15px;
-            font-size: 14px;
+            padding: 12px 16px;
+            font-size: 13px;
             color: #ffffff;
             cursor: pointer;
             border-bottom: 1px solid #21262d;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .popup-item:hover {
+            background-color: #28334a;
         }
         .sidebar {
             position: fixed;
@@ -203,7 +221,7 @@
 
     <header>
         <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-        <div class="header-title">Ai Sameer Pro</div>
+        <div class="header-title">Ai Sameer</div>
         <button class="top-icon-btn" onclick="location.reload()">✏️</button>
     </header>
 
@@ -221,27 +239,29 @@
     </div>
 
     <div class="main-container">
-        <div class="logo-icon">✨</div>
-        <h2>Your move, Shaik!</h2>
-        
-        <div class="features-grid">
-            <button class="feature-btn" onclick="alert('Photos clicked')">Photos</button>
-            <button class="feature-btn" onclick="alert('Camera clicked')">Camera</button>
-            <button class="feature-btn" onclick="alert('Avatar clicked')">Avatar</button>
-        </div>
+        <div class="content-area">
+            <div class="logo-icon">✨</div>
+            <h2>Ai Sameer</h2>
+            
+            <div class="features-grid">
+                <button class="feature-btn" onclick="alert('Photos clicked')">Photos</button>
+                <button class="feature-btn" onclick="alert('Camera clicked')">Camera</button>
+                <button class="feature-btn" onclick="alert('Avatar clicked')">Avatar</button>
+            </div>
 
-        <div class="feature-list">
-            <div class="list-item" onclick="alert('Images feature')">
-                <strong>Images</strong>
-                <small>Create and edit images</small>
-            </div>
-            <div class="list-item" onclick="alert('Music feature')">
-                <strong>Music</strong>
-                <small>Make audio tracks</small>
-            </div>
-            <div class="list-item" onclick="alert('Canvas feature')">
-                <strong>Canvas</strong>
-                <small>Code, write or make slides</small>
+            <div class="feature-list">
+                <div class="list-item" onclick="alert('Images feature')">
+                    <strong>Images</strong>
+                    <small>Create and edit images</small>
+                </div>
+                <div class="list-item" onclick="alert('Music feature')">
+                    <strong>Music</strong>
+                    <small>Make audio tracks</small>
+                </div>
+                <div class="list-item" onclick="alert('Canvas feature')">
+                    <strong>Canvas</strong>
+                    <small>Code, write or make slides</small>
+                </div>
             </div>
         </div>
 
@@ -254,7 +274,7 @@
             </div>
 
             <div class="input-box">
-                <button class="plus-btn" onclick="togglePlusMenu(event)">+</button>
+                <button class="plus-btn" onclick="togglePlusMenu(event)">＋</button>
                 <input type="text" id="userInput" placeholder="Ask Ai Sameer...">
                 <div class="action-btns">
                     <button class="mic-btn" onclick="startVoiceRecognition()" title="Voice Input">🎤</button>
@@ -297,12 +317,16 @@
             try {
                 const recognition = new SpeechRecognition();
                 recognition.lang = 'te-IN';
+                recognition.interimResults = false;
+                
                 recognition.onresult = function(event) {
                     document.getElementById('userInput').value = event.results[0][0].transcript;
                 };
-                recognition.onerror = function() {
+                
+                recognition.onerror = function(event) {
                     alert("మైక్ పర్మిషన్ లేదా నెట్‌వర్క్ సమస్య ఉంది.");
                 };
+                
                 recognition.start();
             } catch (e) {
                 alert("మైక్ రన్ చేయడం కుదరలేదు.");
