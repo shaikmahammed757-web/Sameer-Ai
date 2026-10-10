@@ -22,15 +22,21 @@
             justify-content: space-between;
             align-items: center;
             padding: 15px;
-            background-color: #121826;
-            border-bottom: 1px solid #1f293d;
+            background-color: #0b0f19;
         }
-        .menu-btn, .new-chat-btn {
+        .menu-btn, .top-icon-btn {
             background: transparent;
             border: none;
             color: white;
             font-size: 20px;
             cursor: pointer;
+        }
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+            font-weight: 500;
         }
         .main-container {
             flex: 1;
@@ -42,13 +48,22 @@
             padding: 20px;
             overflow-y: auto;
         }
+        .logo-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #4285F4, #9B72CB, #D96570);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
         h2 {
-            margin-bottom: 20px;
+            margin-top: 0;
+            margin-bottom: 25px;
             font-weight: 400;
+            font-size: 28px;
         }
         .features-grid {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             margin-bottom: 20px;
             flex-wrap: wrap;
             justify-content: center;
@@ -57,44 +72,54 @@
             background-color: #1e293b;
             border: none;
             color: white;
-            padding: 12px 20px;
-            border-radius: 12px;
+            padding: 10px 18px;
+            border-radius: 20px;
             cursor: pointer;
             font-size: 14px;
         }
         .feature-list {
             width: 100%;
-            max-width: 500px;
+            max-width: 450px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             margin-bottom: 20px;
         }
         .list-item {
             background-color: #161b22;
             border: 1px solid #30363d;
-            padding: 12px 18px;
-            border-radius: 14px;
+            padding: 10px 15px;
+            border-radius: 12px;
             text-align: left;
             cursor: pointer;
         }
         .list-item strong {
             display: block;
-            font-size: 15px;
+            font-size: 14px;
         }
         .list-item small {
             color: #8b949e;
-            font-size: 13px;
+            font-size: 12px;
         }
+        /* Input Box matching Gemini Style */
         .input-box {
             display: flex;
             align-items: center;
-            background-color: #1e293b;
-            padding: 10px 15px;
-            border-radius: 30px;
+            background-color: #171c28;
+            border: 1px solid #2d3748;
+            padding: 8px 15px;
+            border-radius: 35px;
             width: 90%;
             max-width: 600px;
             margin-bottom: 20px;
+        }
+        .plus-btn {
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            font-size: 22px;
+            cursor: pointer;
+            margin-right: 12px;
         }
         .input-box input {
             flex: 1;
@@ -104,14 +129,23 @@
             font-size: 16px;
             outline: none;
         }
-        .input-box button {
+        .input-box input::placeholder {
+            color: #8b949e;
+        }
+        .action-btns {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .mic-btn, .send-btn {
             background: transparent;
             border: none;
-            color: #94a3b8;
+            color: #ffffff;
             cursor: pointer;
             font-size: 18px;
-            margin-left: 10px;
+            padding: 5px;
         }
+        /* Sidebar */
         .sidebar {
             position: fixed;
             top: 0;
@@ -151,11 +185,13 @@
 
     <header>
         <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-        <span style="font-size: 18px; font-weight: bold;">Ai Sameer Pro</span>
-        <button class="new-chat-btn" onclick="location.reload()">✏️</button>
+        <div class="header-title">
+            <span>Ai Sameer Auto</span>
+        </div>
+        <button class="top-icon-btn" onclick="location.reload()">✏️</button>
     </header>
 
-    <!-- Sidebar Menu -->
+    <!-- Sidebar -->
     <div id="sidebar" class="sidebar">
         <div class="sidebar-header">
             <h3>Ai Sameer</h3>
@@ -170,7 +206,8 @@
     </div>
 
     <div class="main-container">
-        <h2>Where should we start?</h2>
+        <div class="logo-icon">✨</div>
+        <h2>Your move, Shaik!</h2>
         
         <div class="features-grid">
             <button class="feature-btn">Photos</button>
@@ -193,10 +230,14 @@
             </div>
         </div>
 
+        <!-- Input Box with Plus and Working Mic -->
         <div class="input-box">
+            <button class="plus-btn" onclick="alert('Plus options clicked')">+</button>
             <input type="text" id="userInput" placeholder="Ask Ai Sameer...">
-            <button onclick="startVoiceRecognition()" title="Voice Input">🎤</button>
-            <button onclick="sendMessage()">➤</button>
+            <div class="action-btns">
+                <button class="mic-btn" onclick="startVoiceRecognition()" title="Voice Input">🎤</button>
+                <button class="send-btn" onclick="sendMessage()">➤</button>
+            </div>
         </div>
     </div>
 
@@ -218,18 +259,22 @@
                 return;
             }
             
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'te-IN';
-            recognition.start();
+            try {
+                const recognition = new SpeechRecognition();
+                recognition.lang = 'te-IN'; // తెలుగు వాయిస్ రికగ్నిషన్
+                recognition.start();
 
-            recognition.onresult = function(event) {
-                const speechToText = event.results[0][0].transcript;
-                document.getElementById('userInput').value = speechToText;
-            };
+                recognition.onresult = function(event) {
+                    const speechToText = event.results[0][0].transcript;
+                    document.getElementById('userInput').value = speechToText;
+                };
 
-            recognition.onerror = function(event) {
-                alert("మైక్ రికగ్నిషన్‌లో లోపం ఏర్పడింది. దయచేసి మళ్లీ ప్రయత్నించండి.");
-            };
+                recognition.onerror = function(event) {
+                    alert("మైక్ పర్మిషన్ లేదా నెట్‌వర్క్ సమస్య ఉంది. దయచేసి క్రోమ్ బ్రౌజర్‌లో మైక్ పర్మిషన్ చెక్ చేయండి.");
+                };
+            } catch (e) {
+                alert("మైక్ రన్ చేయడం కుదరలేదు.");
+            }
         }
 
         function sendMessage() {
