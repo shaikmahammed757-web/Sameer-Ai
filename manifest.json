@@ -1,15 +1,16 @@
 {
-  "name": "Ai Sameer",
+  "name": "Ai Sameer - Your Personal AI Assistant",
   "short_name": "Ai Sameer",
-  "start_url": "./index.html",
-  "display": "standalone",
-  "background_color": "#020617",
-  "theme_color": "#2563eb",
+  "start_url": "/Ai-Sameer/",
+  "display": "fullscreen",
+  "background_color": "#0b0f19",
+  "theme_color": "#0b0f19",
+  "orientation": "portrait",
   "icons": [
     {
-      "src": "file_00000000a8a481f5885791dfcf538df9.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
     }
   ]
 }
