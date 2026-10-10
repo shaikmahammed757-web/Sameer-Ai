@@ -456,32 +456,30 @@
                 
                 let lowerText = text.toLowerCase();
                 let responseText = "";
-                let langCode = 'te-IN'; // Default Telugu
+                let langCode = 'te-IN';
 
-                // Check language and topic context
-                if (/[\u0c00-\u0c7f]/.test(text) || lowerText.includes('యూట్యూబ్') || lowerText.includes('డిలీట్') || lowerText.includes('తెలుగు')) {
-                    langCode = 'te-IN';
-                    if (lowerText.includes('డిలీట్') || lowerText.includes('delete')) {
-                        responseText = "యూట్యూబ్ ఛానెల్‌ని డిలీట్ చేయడానికి: ముందుగా YouTube Studioలోకి వెళ్లండి -> Settings -> Channel -> Advanced settings -> Remove YouTube content ఆప్షన్‌ను ఎంచుకుని మీ ఛానెల్‌ని పర్మినెంట్‌గా తొలగించవచ్చు.";
+                if (lowerText.includes('sk md') || lowerText.includes('riding') || lowerText.includes('యూట్యూబ్') || lowerText.includes('డిలీట్')) {
+                    if (lowerText.includes('riding')) {
+                        responseText = "ఎస్.కె. ఎండి రైడింగ్ టీవీ (SK MD RIDING TV) యూట్యూబ్ ఛానెల్‌కి స్వాగతం! ఇక్కడ అద్భుతమైన రైడింగ్ కంటెంట్ అందుబాటులో ఉంది.";
+                    } else if (lowerText.includes('డిలీట్')) {
+                        responseText = "యూట్యూబ్ ఛానెల్‌ని డిలీట్ చేయడానికి: YouTube Studio -> Settings -> Channel -> Advanced settings -> Remove YouTube content.";
                     } else {
-                        responseText = "నమస్తే షైక్! నేను Ai Sameer ని. మీరు అడిగిన \"" + text + "\" అంశంపై పూర్తి వివరాలను అందిస్తున్నాను.";
+                        responseText = "ఎస్.కె. ఎండి రైడింగ్ టీవీ (SK MD RIDING TV) ఛానెల్ మరియు అప్‌డేట్స్ గురించి మీకు పూర్తి వివరాలు అందిస్తున్నాను!";
                     }
-                } else if (/[\u0900-\u097f]/.test(text) || lowerText.includes('kaise') || lowerText.includes('kya')) {
+                } else if (/[\u0c00-\u0c7f]/.test(text)) {
+                    langCode = 'te-IN';
+                    responseText = "నమస్తే షైక్! నేను Ai Sameer ని. మీరు అడిగిన \"" + text + "\" అంశంపై పూర్తి వివరాలను అందిస్తున్నాను.";
+                } else if (/[\u0900-\u097f]/.test(text)) {
                     langCode = 'hi-IN';
-                    responseText = "नमस्ते शेख! मैं Ai Sameer हूँ। आपके द्वारा पूछे गए प्रश्न \"" + text + "\" का उत्तर यह है कि आप इसे आसानी से कर सकते हैं।";
+                    responseText = "नमस्ते शेख! मैं Ai Sameer हूँ। आपके द्वारा पूछे गए प्रश्न \"" + text + "\" का उत्तर यह है।";
                 } else {
                     langCode = 'en-US';
-                    if (lowerText.includes('delete') && lowerText.includes('youtube')) {
-                        responseText = "To delete your YouTube channel: Go to YouTube Studio -> Settings -> Channel -> Advanced settings -> Remove YouTube content.";
-                    } else {
-                        responseText = "Hello Shaik! I am Ai Sameer. I am here to assist you with \"" + text + "\". Let me know how else I can help!";
-                    }
+                    responseText = "Hello Shaik! I am Ai Sameer. Here is the detailed information regarding \"" + text + "\".";
                 }
 
                 aiMsg.innerText = responseText;
                 aiWrapper.appendChild(aiMsg);
 
-                // Actions bar
                 const actionsBar = document.createElement('div');
                 actionsBar.className = 'ai-actions-bar';
                 
@@ -519,7 +517,7 @@
                         utterance.lang = langCode;
                         window.speechSynthesis.speak(utterance);
                     } else {
-                        alert('Audio speech not supported on this browser.');
+                        alert('Audio speech not supported.');
                     }
                 };
 
@@ -532,7 +530,7 @@
                 aiWrapper.appendChild(actionsBar);
                 history.appendChild(aiWrapper);
                 history.scrollTop = history.scrollHeight;
-            }, 800);
+            }, 500);
         }
 
         function startVoiceRecognition() {
@@ -540,7 +538,7 @@
             const micBtn = document.getElementById('micBtn');
 
             if (!SpeechRecognition) {
-                const spokenText = prompt("మైక్ సపోర్ట్ లేదు. మీ సందేశాన్ని ఇక్కడ టైప్ చేయండి:");
+                const spokenText = prompt("దయచేసి మీ సందేశాన్ని ఇక్కడ టైప్ చేయండి:");
                 if (spokenText) {
                     document.getElementById('userInput').value = spokenText;
                 }
@@ -549,7 +547,7 @@
             
             try {
                 const recognition = new SpeechRecognition();
-                recognition.lang = 'te-IN'; // Default speech recognition locale
+                recognition.lang = 'te-IN';
                 recognition.interimResults = false;
                 
                 recognition.onstart = function() {
@@ -559,6 +557,12 @@
                 recognition.onresult = function(event) {
                     document.getElementById('userInput').value = event.results[0][0].transcript;
                     micBtn.classList.remove('listening');
+                    sendMessage(); // Auto send message when voice recognition finishes
                 };
                 
-                
+                recognition.onerror = function(event) {
+                    micBtn.classList.remove('listening');
+                };
+
+                recognition.onend = function() {
+         
