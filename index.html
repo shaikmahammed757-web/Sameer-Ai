@@ -203,7 +203,7 @@
 
     <header>
         <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-        <div class="header-title">Ai Sameer Auto</div>
+        <div class="header-title">Ai Sameer Pro</div>
         <button class="top-icon-btn" onclick="location.reload()">✏️</button>
     </header>
 
@@ -225,21 +225,21 @@
         <h2>Your move, Shaik!</h2>
         
         <div class="features-grid">
-            <button class="feature-btn">Photos</button>
-            <button class="feature-btn">Camera</button>
-            <button class="feature-btn">Avatar</button>
+            <button class="feature-btn" onclick="alert('Photos clicked')">Photos</button>
+            <button class="feature-btn" onclick="alert('Camera clicked')">Camera</button>
+            <button class="feature-btn" onclick="alert('Avatar clicked')">Avatar</button>
         </div>
 
         <div class="feature-list">
-            <div class="list-item">
+            <div class="list-item" onclick="alert('Images feature')">
                 <strong>Images</strong>
                 <small>Create and edit images</small>
             </div>
-            <div class="list-item">
+            <div class="list-item" onclick="alert('Music feature')">
                 <strong>Music</strong>
                 <small>Make audio tracks</small>
             </div>
-            <div class="list-item">
+            <div class="list-item" onclick="alert('Canvas feature')">
                 <strong>Canvas</strong>
                 <small>Code, write or make slides</small>
             </div>
@@ -301,7 +301,7 @@
                     document.getElementById('userInput').value = event.results[0][0].transcript;
                 };
                 recognition.onerror = function() {
-                    alert("మైక్ పర్మిషన్ చెక్ చేయండి.");
+                    alert("మైక్ పర్మిషన్ లేదా నెట్‌వర్క్ సమస్య ఉంది.");
                 };
                 recognition.start();
             } catch (e) {
