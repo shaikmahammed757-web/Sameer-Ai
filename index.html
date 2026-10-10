@@ -35,9 +35,6 @@
         .header-title {
             font-size: 18px;
             font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 5px;
         }
         .main-container {
             flex: 1;
@@ -50,20 +47,19 @@
             position: relative;
         }
         .gemini-sparkle {
-            font-size: 36px;
-            margin-bottom: 15px;
+            font-size: 38px;
+            margin-bottom: 12px;
             background: linear-gradient(42deg, #4285F4, #9B72CB, #EA4335);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .welcome-text {
-            font-size: 26px;
+        .center-title {
+            font-size: 28px;
             font-weight: 400;
-            color: #e2e8f0;
-            line-height: 1.4;
-            max-width: 400px;
+            color: #ffffff;
+            margin-bottom: 0;
         }
-        /* Bottom Input Box Container */
+        /* Bottom Input Box Container where all buttons reside together */
         .input-box-wrapper {
             position: relative;
             width: 92%;
@@ -76,7 +72,7 @@
             align-items: center;
             background-color: #171c28;
             border: 1px solid #2d3748;
-            padding: 10px 18px;
+            padding: 8px 15px;
             border-radius: 35px;
             width: 100%;
             box-sizing: border-box;
@@ -85,9 +81,9 @@
             background: transparent;
             border: none;
             color: #ffffff;
-            font-size: 24px;
+            font-size: 22px;
             cursor: pointer;
-            margin-right: 15px;
+            margin-right: 10px;
             display: flex;
             align-items: center;
         }
@@ -105,23 +101,23 @@
         .action-btns {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
         }
         .mic-btn, .send-btn {
             background: transparent;
             border: none;
             color: #ffffff;
             cursor: pointer;
-            font-size: 20px;
+            font-size: 18px;
             padding: 5px;
             display: flex;
             align-items: center;
         }
-        /* Popup Menu properly positioned */
+        /* Popup Menu properly positioned above input box */
         .plus-popup {
             display: none;
             position: absolute;
-            bottom: 70px;
+            bottom: 65px;
             left: 0;
             background-color: #1a2234;
             border: 1px solid #30363d;
@@ -188,9 +184,7 @@
 
     <header>
         <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-        <div class="header-title">
-            <span>Gemini Auto</span> ▾
-        </div>
+        <div class="header-title">Ai Sameer</div>
         <button class="top-icon-btn" onclick="location.reload()">✏️</button>
     </header>
 
@@ -210,7 +204,7 @@
     <div class="main-container">
         <div>
             <div class="gemini-sparkle">✦</div>
-            <div class="welcome-text">The mic is yours, Shaik</div>
+            <div class="center-title">Ai Sameer</div>
         </div>
 
         <div class="input-box-wrapper">
@@ -221,9 +215,10 @@
                 <div class="popup-item" onclick="selectOption('Text to Video')">🎬 Text to Video</div>
             </div>
 
+            <!-- All buttons (Plus, Input, Mic, Send) are nicely packed inside this single search box -->
             <div class="input-box">
                 <button class="plus-btn" onclick="togglePlusMenu(event)">＋</button>
-                <input type="text" id="userInput" placeholder="Ask Gemini">
+                <input type="text" id="userInput" placeholder="Ask Ai Sameer">
                 <div class="action-btns">
                     <button class="mic-btn" onclick="startVoiceRecognition()" title="Voice Input">🎤</button>
                     <button class="send-btn" onclick="sendMessage()">➤</button>
@@ -272,7 +267,7 @@
                 };
                 
                 recognition.onerror = function(event) {
-                    alert("మైక్ పర్మిషన్ లేదా నెట్‌వర్క్ సమస్య ఉంది. క్రోమ్ బ్రౌజర్‌లో మైక్ పర్మిషన్ Allow చేయబడిందో లేదో చెక్ చేయండి.");
+                    alert("మైక్ పర్మిషన్ లేదా నెట్‌వర్క్ సమస్య ఉంది.");
                 };
                 
                 recognition.start();
