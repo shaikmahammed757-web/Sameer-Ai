@@ -2,200 +2,141 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ai Sameer - Your Personal AI Assistant</title>
-    <link rel="manifest" href="./manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ai Sameer Pro</title>
+    <!-- PWA Manifest Link -->
+    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0b0f19">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        html, body { width: 100%; height: 100%; background-color: #0b0f19; color: #ffffff; display: flex; flex-direction: column; overflow: hidden; }
-        
-        header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #0b0f19; border-bottom: 1px solid rgba(255, 255, 255, 0.08); z-index: 50; flex-shrink: 0; }
-        .header-left { display: flex; align-items: center; gap: 12px; }
-        .menu-icon { font-size: 22px; cursor: pointer; color: #fff; padding: 4px; }
-        .model-selector { display: flex; align-items: center; gap: 6px; font-size: 16px; font-weight: 600; color: #fff; cursor: pointer; }
-        .header-right { font-size: 22px; cursor: pointer; color: #fff; padding: 4px; }
-
-        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; z-index: 200; }
-        .side-drawer { position: fixed; top: 0; left: -300px; width: 280px; height: 100%; background: #111827; z-index: 210; display: flex; flex-direction: column; transition: left 0.3s ease; box-shadow: 4px 0 15px rgba(0,0,0,0.5); }
-        .side-drawer.open { left: 0; }
-        
-        .drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 18px; font-weight: 600; color: #fff; }
-        .drawer-close { font-size: 22px; cursor: pointer; color: #94a3b8; }
-        
-        .drawer-content { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 4px; }
-        .drawer-item { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 12px; cursor: pointer; color: #e2e8f0; font-size: 14px; }
-        .drawer-item:hover { background: rgba(255,255,255,0.05); }
-        
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
-        .welcome-screen { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; gap: 16px; background-color: #0b0f19; overflow-y: auto; }
-        .sparkle-logo { font-size: 40px; color: #ec4899; }
-        .welcome-screen h2 { font-size: 24px; font-weight: 500; color: #f8fafc; }
-
-        .chat-container { flex: 1; overflow-y: auto; padding: 16px; display: none; flex-direction: column; gap: 16px; background-color: #0b0f19; }
-        .message-wrapper { display: flex; flex-direction: column; gap: 6px; max-width: 85%; }
-        .user-wrapper { align-self: flex-end; }
-        .ai-wrapper { align-self: flex-start; width: 100%; }
-        .message { padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.5; }
-        .ai-msg { background: #1e293b; color: #fff; }
-        .user-msg { background: #3b82f6; color: #fff; }
-
-        .input-bar-wrapper { padding: 12px 16px 20px 16px; background: #0b0f19; flex-shrink: 0; width: 100%; z-index: 40; }
-        .input-bar { display: flex; align-items: center; background: #161f30; border-radius: 28px; padding: 8px 12px; border: 1px solid rgba(255, 255, 255, 0.08); gap: 8px; }
-        .plus-btn { background: none; border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .text-input { flex: 1; background: none; border: none; padding: 8px; color: #fff; font-size: 15px; outline: none; }
-        .mic-btn { background: none; border: none; color: #cbd5e1; font-size: 18px; cursor: pointer; padding: 0 4px; }
-        .wave-btn { background: #3b82f6; color: #fff; border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; }
-
-        .menu-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; z-index: 100; align-items: flex-end; }
-        .menu-sheet { width: 100%; background: #161f30; border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
-        .tools-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; text-align: center; }
-        .tool-item { background: #1e293b; padding: 14px 10px; border-radius: 16px; color: #cbd5e1; font-size: 12px; cursor: pointer; }
+        body {
+            margin: 0;
+            background-color: #0b0f19;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: #121826;
+            border-bottom: 1px solid #1f293d;
+        }
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        .features-grid {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .feature-btn {
+            background-color: #1e293b;
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .input-box {
+            display: flex;
+            align-items: center;
+            background-color: #1e293b;
+            padding: 10px 15px;
+            border-radius: 30px;
+            width: 90%;
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+        .input-box input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
+        .input-box button {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 18px;
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="header-left">
-            <span class="menu-icon" id="menuToggleBtn">☰</span>
-            <div class="model-selector">
-                <span>Ai Sameer Pro</span>
-            </div>
-        </div>
-        <div class="header-right" id="newChatBtn">✏️</div>
+        <span style="font-size: 18px; font-weight: bold;">Ai Sameer Pro</span>
     </header>
 
-    <div class="drawer-overlay" id="drawerOverlay"></div>
-    <div class="side-drawer" id="sideDrawer">
-        <div class="drawer-header">
-            <span>Ai Sameer</span>
-            <span class="drawer-close" id="drawerCloseBtn">✕</span>
+    <div class="chat-container">
+        <h2>Where should we start?</h2>
+        
+        <div class="features-grid">
+            <button class="feature-btn">Photos</button>
+            <button class="feature-btn">Camera</button>
+            <button class="feature-btn">Avatar</button>
         </div>
-        <div class="drawer-content">
-            <div class="drawer-item" onclick="startNewChat()"><span>✏️</span> New chat</div>
-            <div class="drawer-item" onclick="selectDrawerItem('Images')"><span>🖼️</span> Images</div>
-            <div class="drawer-item" onclick="selectDrawerItem('Library')"><span>📁</span> Library</div>
-        </div>
-    </div>
 
-    <div class="main-content">
-        <div class="welcome-screen" id="welcomeScreen">
-            <div class="sparkle-logo">✨</div>
-            <h2>Where should we start?</h2>
-        </div>
-        <div class="chat-container" id="chatContainer"></div>
-    </div>
-
-    <div class="input-bar-wrapper">
-        <div class="input-bar">
-            <button class="plus-btn" id="plusBtn">+</button>
-            <input type="text" class="text-input" id="userInput" placeholder="Ask Ai Sameer...">
-            <button class="mic-btn" id="micBtn">🎙️</button>
-            <button class="wave-btn" id="waveBtn">📊</button>
-        </div>
-    </div>
-
-    <div class="menu-overlay" id="menuOverlay">
-        <div class="menu-sheet">
-            <div class="tools-grid">
-                <div class="tool-item" onclick="selectTool('Photos')">🖼️<br>Photos</div>
-                <div class="tool-item" onclick="selectTool('Camera')">📷<br>Camera</div>
-                <div class="tool-item" onclick="selectTool('Avatar')">😊<br>Avatar</div>
-            </div>
+        <div class="input-box">
+            <input type="text" id="userInput" placeholder="Ask Ai Sameer...">
+            <button onclick="startVoiceRecognition()" title="Voice Input">🎤</button>
+            <button onclick="sendMessage()">➤</button>
         </div>
     </div>
 
     <script>
-        const plusBtn = document.getElementById('plusBtn');
-        const menuOverlay = document.getElementById('menuOverlay');
-        const chatContainer = document.getElementById('chatContainer');
-        const welcomeScreen = document.getElementById('welcomeScreen');
-        const userInput = document.getElementById('userInput');
-        const micBtn = document.getElementById('micBtn');
-        const newChatBtn = document.getElementById('newChatBtn');
-        
-        const menuToggleBtn = document.getElementById('menuToggleBtn');
-        const sideDrawer = document.getElementById('sideDrawer');
-        const drawerOverlay = document.getElementById('drawerOverlay');
-        const drawerCloseBtn = document.getElementById('drawerCloseBtn');
-
-        menuToggleBtn.onclick = () => { sideDrawer.classList.add('open'); drawerOverlay.style.display = 'block'; };
-        const closeDrawer = () => { sideDrawer.classList.remove('open'); drawerOverlay.style.display = 'none'; };
-        drawerCloseBtn.onclick = closeDrawer;
-        drawerOverlay.onclick = closeDrawer;
-
-        plusBtn.onclick = () => { menuOverlay.style.display = 'flex'; };
-        menuOverlay.onclick = (e) => { if (e.target === menuOverlay) menuOverlay.style.display = 'none'; };
-
-        function startNewChat() {
-            closeDrawer();
-            chatContainer.innerHTML = '';
-            chatContainer.style.display = 'none';
-            welcomeScreen.style.display = 'flex';
-            userInput.value = '';
-        }
-        newChatBtn.onclick = startNewChat;
-
-        function selectDrawerItem(item) {
-            closeDrawer();
-            welcomeScreen.style.display = 'none';
-            chatContainer.style.display = 'flex';
-            appendMsg(`Selected: ${item}`, 'user');
-            appendMsg(`Ai Sameer: Opened ${item} successfully!`, 'ai');
+        // Service Worker Registration for PWA Install Prompt
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then((reg) => console.log('Service Worker registered', reg))
+                    .catch((err) => console.log('Service Worker failed', err));
+            });
         }
 
-        function selectTool(tool) {
-            menuOverlay.style.display = 'none';
-            welcomeScreen.style.display = 'none';
-            chatContainer.style.display = 'flex';
-            appendMsg(`Selected Tool: ${tool}`, 'user');
-            appendMsg(`Ai Sameer: ${tool} is ready!`, 'ai');
-        }
-
-        userInput.onkeypress = (e) => {
-            if (e.key === 'Enter' && userInput.value.trim() !== '') {
-                let val = userInput.value;
-                userInput.value = '';
-                welcomeScreen.style.display = 'none';
-                chatContainer.style.display = 'flex';
-                appendMsg(val, 'user');
-                setTimeout(() => appendMsg(`Ai Sameer: Processing "${val}"`, 'ai'), 500);
-            }
-        };
-
-        micBtn.onclick = () => {
+        function startVoiceRecognition() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) { alert('Speech recognition not supported.'); return; }
-            try {
-                const rec = new SpeechRecognition();
-                rec.lang = 'te-IN';
-                userInput.placeholder = "వింటున్నాను మాట్లాడండి...";
-                rec.onresult = (e) => {
-                    let text = e.results[0][0].transcript;
-                    userInput.value = text;
-                    userInput.placeholder = "Ask Ai Sameer...";
-                    if(text) {
-                        welcomeScreen.style.display = 'none';
-                        chatContainer.style.display = 'flex';
-                        appendMsg(text, 'user');
-                        setTimeout(() => appendMsg(`Ai Sameer: Processing "${text}"`, 'ai'), 500);
-                    }
-                };
-                rec.onerror = rec.onend = () => { userInput.placeholder = "Ask Ai Sameer..."; };
-                rec.start();
-            } catch(err) { alert('Microphone permission required.'); }
-        };
+            if (!SpeechRecognition) {
+                alert("మీ బ్రౌజర్ వాయిస్ రికగ్నిషన్‌ని సపోర్ట్ చేయదు.");
+                return;
+            }
+            
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'te-IN';
+            recognition.start();
 
-        function appendMsg(text, sender) {
-            const wrapper = document.createElement('div');
-            wrapper.className = `message-wrapper ${sender}-wrapper`;
-            const msg = document.createElement('div');
-            msg.className = `message ${sender}-msg`;
-            msg.innerText = text;
-            wrapper.appendChild(msg);
-            chatContainer.appendChild(wrapper);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+            recognition.onresult = function(event) {
+                const speechToText = event.results[0][0].transcript;
+                document.getElementById('userInput').value = speechToText;
+            };
+
+            recognition.onerror = function(event) {
+                alert("మైక్ రికగ్నిషన్‌లో లోపం ఏర్పడింది. దయచేసి మళ్లీ ప్రయత్నించండి.");
+            };
+        }
+
+        function sendMessage() {
+            const text = document.getElementById('userInput').value;
+            if (text.trim() !== "") {
+                alert("సందేశం పంపబడింది: " + text);
+                document.getElementById('userInput').value = "";
+            }
         }
     </script>
+
 </body>
 </html>
