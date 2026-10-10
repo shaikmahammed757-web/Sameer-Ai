@@ -118,12 +118,7 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                 }
                 .app-title { font-size: 20px; font-weight: 800; background: linear-gradient(90deg, #00D2FF, #AB55F7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
                 .app-sub { font-size: 11px; color: #94A3B8; }
-                
-                .header-actions {
-                    display: flex;
-                    gap: 8px;
-                    align-items: center;
-                }
+                .header-actions { display: flex; gap: 8px; align-items: center; }
                 .icon-btn {
                     background: #111833;
                     border: 1px solid #1E2D4A;
@@ -137,8 +132,6 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                     font-size: 16px;
                     cursor: pointer;
                 }
-
-                /* సైడ్ హిస్టరీ డ్రాయర్ (Sidebar) */
                 .sidebar {
                     position: fixed;
                     top: 0;
@@ -152,9 +145,7 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                     padding: 20px;
                     overflow-y: auto;
                 }
-                .sidebar.open {
-                    left: 0;
-                }
+                .sidebar.open { left: 0; }
                 .sidebar-header {
                     display: flex;
                     justify-content: space-between;
@@ -164,11 +155,7 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                     font-weight: bold;
                     color: #38BDF8;
                 }
-                .close-sidebar {
-                    font-size: 18px;
-                    cursor: pointer;
-                    color: #94A3B8;
-                }
+                .close-sidebar { font-size: 18px; cursor: pointer; color: #94A3B8; }
                 .history-item {
                     background: #111833;
                     border: 1px solid #1E2D4A;
@@ -181,14 +168,7 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                     justify-content: space-between;
                     align-items: center;
                 }
-                .history-text {
-                    cursor: pointer;
-                    flex-grow: 1;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                    margin-right: 8px;
-                }
+                .history-text { cursor: pointer; flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 8px; }
                 .delete-btn {
                     background: rgba(239, 68, 68, 0.2);
                     color: #EF4444;
@@ -202,7 +182,6 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                     justify-content: center;
                     font-size: 11px;
                 }
-
                 .hero-card {
                     background: radial-gradient(circle at center, #1E294B 0%, #0F172A 100%);
                     border: 1px solid #1E2938;
@@ -213,7 +192,6 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                 }
                 .greeting-title { font-size: 18px; font-weight: 700; color: #F8FAFC; margin-bottom: 4px; }
                 .greeting-sub { font-size: 13px; color: #38BDF8; }
-                
                 .tools-container {
                     background: #0F172A;
                     border: 1px solid #1E2938;
@@ -221,18 +199,8 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                     padding: 14px;
                     margin-bottom: 20px;
                 }
-                .tools-heading {
-                    font-size: 13px;
-                    font-weight: 700;
-                    color: #94A3B8;
-                    margin-bottom: 10px;
-                    padding-left: 4px;
-                }
-                .grid {
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    gap: 10px;
-                }
+                .tools-heading { font-size: 13px; font-weight: 700; color: #94A3B8; margin-bottom: 10px; padding-left: 4px; }
+                .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
                 .grid-btn {
                     background: #111833;
                     border: 1px solid #1E2D4A;
@@ -246,26 +214,12 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                     font-weight: 600;
                     cursor: pointer;
                 }
-                .btn-icon {
-                    width: 30px;
-                    height: 30px;
-                    border-radius: 8px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: 14px;
-                }
+                .btn-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
                 .ic-red { background: rgba(239, 68, 68, 0.2); color: #EF4444; }
                 .ic-pink { background: rgba(236, 72, 153, 0.2); color: #EC4899; }
                 .ic-indigo { background: rgba(99, 102, 241, 0.2); color: #6366F1; }
                 .ic-amber { background: rgba(245, 158, 11, 0.2); color: #F59E0B; }
-                
-                .chat-container {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 12px;
-                    margin-bottom: 100px;
-                }
+                .chat-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 100px; }
                 .chat-bubble-user {
                     background: #1E3A8A;
                     color: #E2E8F0;
@@ -301,6 +255,25 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                     align-items: center;
                     gap: 6px;
                 }
+                .sub-box {
+                    background: linear-gradient(135deg, #1E1B4B 0%, #312E81 100%);
+                    border: 1px solid #6366F1;
+                    padding: 16px;
+                    border-radius: 16px;
+                    text-align: center;
+                    margin-top: 10px;
+                }
+                .upgrade-btn {
+                    background: linear-gradient(135deg, #6366F1, #EC4899);
+                    color: white;
+                    border: none;
+                    padding: 10px 20px;
+                    border-radius: 20px;
+                    font-weight: bold;
+                    font-size: 12px;
+                    cursor: pointer;
+                    margin-top: 10px;
+                }
                 .input-bar {
                     position: fixed;
                     bottom: 60px;
@@ -314,14 +287,7 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                     align-items: center;
                     gap: 10px;
                 }
-                .input-bar input {
-                    background: transparent;
-                    border: none;
-                    color: #FFF;
-                    width: 100%;
-                    outline: none;
-                    font-size: 13px;
-                }
+                .input-bar input { background: transparent; border: none; color: #FFF; width: 100%; outline: none; font-size: 13px; }
                 .action-icon { color: #64748B; font-size: 18px; cursor: pointer; }
                 .send-circle {
                     width: 36px;
@@ -352,11 +318,10 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
             </style>
         </head>
         <body>
-            <!-- సైడ్ హిస్టరీ డ్రాయర్ (Sidebar with Delete options) -->
             <div class="sidebar" id="sidebar">
                 <div class="sidebar-header">
-                    <span>💬 Chat History</span>
-                    <span class="close-sidebar" onclick="toggleSidebar()">✕</span>
+                    <span>Chat History</span>
+                    <span class="close-sidebar" onclick="toggleSidebar()">X</span>
                 </div>
                 <div id="historyList">
                     <div style="font-size: 12px; color: #64748B;">No recent chats</div>
@@ -372,37 +337,37 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                     </div>
                 </div>
                 <div class="header-actions">
-                    <div class="icon-btn" onclick="toggleSidebar()" title="Chat History">🕒</div>
+                    <div class="icon-btn" onclick="toggleSidebar()" title="History">🕒</div>
                     <div class="icon-btn" onclick="clearAll()" title="New Chat">✏️</div>
                 </div>
             </div>
 
             <div class="hero-card" id="heroCard">
                 <img src="https://raw.githubusercontent.com/shaikmahammad757-web/Sameer-AI/main/logo.png" class="hero-logo-img" onerror="this.style.display='none'">
-                <div class="greeting-title">✨ Hello! I'm AI Sameer</div>
+                <div class="greeting-title">Hello! I am AI Sameer</div>
                 <div class="greeting-sub">How can I help you today?</div>
             </div>
 
             <div class="chat-container" id="chatContainer"></div>
 
             <div class="tools-container" id="toolsContainer">
-                <div class="tools-heading">⚡ AI Assistant Features & Tools</div>
+                <div class="tools-heading">AI Assistant Features & Tools</div>
                 <div class="grid" id="actionGrid">
                     <div class="grid-btn" onclick="runAIAction('youtube')">
                         <div class="btn-icon ic-red">▶</div>
-                        <div>Concept to<br>YouTube Script</div>
+                        <div>Concept to YouTube Script</div>
                     </div>
                     <div class="grid-btn" onclick="runAIAction('txt2img')">
                         <div class="btn-icon ic-pink">🎨</div>
-                        <div>Text to<br>Image</div>
+                        <div>Text to Image</div>
                     </div>
                     <div class="grid-btn" onclick="runAIAction('txt2vid')">
                         <div class="btn-icon ic-indigo">🎥</div>
-                        <div>Text to<br>Video</div>
+                        <div>Text to Video</div>
                     </div>
                     <div class="grid-btn" onclick="runAIAction('summary')">
                         <div class="btn-icon ic-amber">📄</div>
-                        <div>Summarize<br>document</div>
+                        <div>Summarize document</div>
                     </div>
                 </div>
             </div>
@@ -410,8 +375,8 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
             <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFileSelect(event)">
 
             <div class="input-bar">
-                <span class="action-icon" onclick="document.getElementById('fileInput').click()" title="Upload Image">🖼️</span>
-                <span class="action-icon" onclick="document.getElementById('fileInput').click()" title="Attach File">📎</span>
+                <span class="action-icon" onclick="document.getElementById('fileInput').click()" title="Upload">🖼️</span>
+                <span class="action-icon" onclick="document.getElementById('fileInput').click()" title="Attach">📎</span>
                 <input type="text" id="userInput" placeholder="Ask AI Sameer anything...">
                 <span class="action-icon" id="micButton" onclick="AndroidApp.startVoiceInput()" title="Speak">🎙️</span>
                 <div class="send-circle" onclick="sendQuery()">➔</div>
@@ -427,10 +392,10 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
 
             <script>
                 var chatHistoryList = [];
+                var dailyVideoCount = 0;
 
                 function toggleSidebar() {
-                    var sidebar = document.getElementById('sidebar');
-                    sidebar.classList.toggle('open');
+                    document.getElementById('sidebar').classList.toggle('open');
                 }
 
                 function clearAll() {
@@ -448,8 +413,7 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                 function handleFileSelect(event) {
                     var file = event.target.files[0];
                     if (file) {
-                        var fileName = "Image: " + file.name;
-                        appendChat(fileName, "ఈ ఫోటో మీ SK MD Riding TV ప్రాజెక్ట్ కోసం విజయవంతంగా లోడ్ చేయబడింది. దీనిలోని విజువల్స్ పర్ఫెక్ట్‌గా ఉన్నాయి!");
+                        appendChat("Image: " + file.name, "ఈ ఫోటో మీ SK MD Riding TV ప్రాజెక్ట్ కోసం విజయవంతంగా లోడ్ చేయబడింది.");
                         document.getElementById('userInput').value = '';
                     }
                 }
@@ -463,8 +427,8 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                     var html = "";
                     for(var i=0; i<chatHistoryList.length; i++) {
                         html += "<div class='history-item'>";
-                        html += "<span class='history-text' onclick='loadHistoryItem(\"" + chatHistoryList[i] + "\")'>💬 " + chatHistoryList[i] + "</span>";
-                        html += "<button class='delete-btn' onclick='deleteHistoryItem(" + i + ")' title='Delete'>✕</button>";
+                        html += "<span class='history-text' onclick='loadHistoryItem(\"" + chatHistoryList[i] + "\")'>" + chatHistoryList[i] + "</span>";
+                        html += "<button class='delete-btn' onclick='deleteHistoryItem(" + i + ")'>X</button>";
                         html += "</div>";
                     }
                     listDiv.innerHTML = html;
@@ -477,4 +441,15 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
 
                 function deleteHistoryItem(index) {
                     chatHistoryList.splice(index, 1);
-         
+                    updateHistoryUI();
+                }
+
+                function loadHistoryItem(query) {
+                    toggleSidebar();
+                    document.getElementById('userInput').value = query;
+                    sendQuery();
+                }
+
+                function appendChat(userText, aiResponse, isLimitReached) {
+                    document.getElementById('heroCard').style.display = 'none';
+                    document.getElementById('toolsContain
