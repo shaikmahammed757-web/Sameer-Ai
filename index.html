@@ -32,9 +32,6 @@
             cursor: pointer;
         }
         .header-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
             font-size: 18px;
             font-weight: 500;
         }
@@ -52,9 +49,6 @@
         .logo-icon {
             font-size: 32px;
             margin-bottom: 10px;
-            background: linear-gradient(45deg, #4285F4, #9B72CB, #D96570);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
         h2 {
             margin-top: 0;
@@ -102,24 +96,27 @@
             color: #8b949e;
             font-size: 12px;
         }
-        /* Input Box */
-        .input-box {
+        .input-box-wrapper {
             position: relative;
+            width: 90%;
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+        .input-box {
             display: flex;
             align-items: center;
             background-color: #171c28;
             border: 1px solid #2d3748;
             padding: 8px 15px;
             border-radius: 35px;
-            width: 90%;
-            max-width: 600px;
-            margin-bottom: 20px;
+            width: 100%;
+            box-sizing: border-box;
         }
         .plus-btn {
             background: transparent;
             border: none;
             color: #ffffff;
-            font-size: 22px;
+            font-size: 24px;
             cursor: pointer;
             margin-right: 12px;
         }
@@ -130,9 +127,6 @@
             color: white;
             font-size: 16px;
             outline: none;
-        }
-        .input-box input::placeholder {
-            color: #8b949e;
         }
         .action-btns {
             display: flex;
@@ -147,22 +141,20 @@
             font-size: 18px;
             padding: 5px;
         }
-        /* Plus Options Popup Menu */
         .plus-popup {
             display: none;
             position: absolute;
-            bottom: 75px;
-            left: 20px;
+            bottom: 60px;
+            left: 0;
             background-color: #161b22;
             border: 1px solid #30363d;
             border-radius: 16px;
-            width: 220px;
-            box-shadow: 0px 8px 24px rgba(0,0,0,0.5);
-            z-index: 100;
+            width: 230px;
+            box-shadow: 0px 8px 24px rgba(0,0,0,0.6);
+            z-index: 1000;
             text-align: left;
-            overflow: hidden;
         }
-        .plus-popup.show {
+        .plus-popup.active {
             display: block;
         }
         .popup-item {
@@ -171,14 +163,7 @@
             color: #ffffff;
             cursor: pointer;
             border-bottom: 1px solid #21262d;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
-        .popup-item:hover {
-            background-color: #21262d;
-        }
-        /* Sidebar */
         .sidebar {
             position: fixed;
             top: 0;
@@ -187,7 +172,7 @@
             height: 100%;
             background-color: #121826;
             transition: 0.3s;
-            z-index: 1000;
+            z-index: 2000;
             padding: 20px;
             box-sizing: border-box;
             border-right: 1px solid #1f293d;
@@ -218,13 +203,10 @@
 
     <header>
         <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-        <div class="header-title">
-            <span>Ai Sameer Auto</span>
-        </div>
+        <div class="header-title">Ai Sameer Auto</div>
         <button class="top-icon-btn" onclick="location.reload()">✏️</button>
     </header>
 
-    <!-- Sidebar -->
     <div id="sidebar" class="sidebar">
         <div class="sidebar-header">
             <h3>Ai Sameer</h3>
@@ -233,8 +215,8 @@
         <ul class="sidebar-menu">
             <li onclick="alert('New chat started')">➕ New chat</li>
             <li onclick="alert('Opening Images')">🖼️ Images</li>
-            <li onclick="alert('Opening Library')">📁 Library</li>
-            <li onclick="alert('Opening Notebooks')">📓 New notebook</li>
+            <li onclick="alert('Library opened')">📁 Library</li>
+            <li onclick="alert('New notebook opened')">📓 New notebook</li>
         </ul>
     </div>
 
@@ -263,33 +245,26 @@
             </div>
         </div>
 
-        <!-- Input Box with Plus Popup & Working Mic -->
-        <div class="input-box">
-            <button class="plus-btn" onclick="togglePlusMenu(event)">+</button>
-            
-            <!-- Popup Menu for Plus -->
+        <div class="input-box-wrapper">
             <div id="plusPopup" class="plus-popup">
-                <div class="popup-item" onclick="alert('Upload Photo selected')">📷 Upload Photo</div>
-                <div class="popup-item" onclick="alert('Upload Video selected')">🎥 Upload Video</div>
-                <div class="popup-item" onclick="alert('Create Image selected')">🖼️ Text to Image</div>
-                <div class="popup-item" onclick="alert('Create Video selected')">🎬 Text to Video</div>
+                <div class="popup-item" onclick="selectOption('Upload Photo')">📷 Upload Photo</div>
+                <div class="popup-item" onclick="selectOption('Upload Video')">🎥 Upload Video</div>
+                <div class="popup-item" onclick="selectOption('Text to Image')">🖼️ Text to Image</div>
+                <div class="popup-item" onclick="selectOption('Text to Video')">🎬 Text to Video</div>
             </div>
 
-            <input type="text" id="userInput" placeholder="Ask Ai Sameer...">
-            <div class="action-btns">
-                <button class="mic-btn" onclick="startVoiceRecognition()" title="Voice Input">🎤</button>
-                <button class="send-btn" onclick="sendMessage()">➤</button>
+            <div class="input-box">
+                <button class="plus-btn" onclick="togglePlusMenu(event)">+</button>
+                <input type="text" id="userInput" placeholder="Ask Ai Sameer...">
+                <div class="action-btns">
+                    <button class="mic-btn" onclick="startVoiceRecognition()" title="Voice Input">🎤</button>
+                    <button class="send-btn" onclick="sendMessage()">➤</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js');
-            });
-        }
-
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
         }
@@ -297,44 +272,37 @@
         function togglePlusMenu(event) {
             event.stopPropagation();
             const popup = document.getElementById('plusPopup');
-            popup.classList.toggle('show');
+            popup.classList.toggle('active');
         }
 
-        // Close popup when clicking outside
-        window.onclick = function(event) {
-            if (!event.target.matches('.plus-btn')) {
-                const popup = document.getElementById('plusPopup');
-                if (popup && popup.classList.contains('show')) {
-                    popup.classList.remove('show');
-                }
-            }
+        function selectOption(optionName) {
+            document.getElementById('userInput').value = optionName + ": ";
+            document.getElementById('plusPopup').classList.remove('active');
         }
+
+        window.addEventListener('click', function(event) {
+            const popup = document.getElementById('plusPopup');
+            if (popup && !event.target.closest('.input-box-wrapper')) {
+                popup.classList.remove('active');
+            }
+        });
 
         function startVoiceRecognition() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
-                alert("మీ బ్రౌజర్ వాయిస్ రికగ్నిషన్‌ని సపోర్ట్ చేయదు.");
+                alert("ఈ బ్రౌజర్ వాయిస్ రికగ్నిషన్‌ని సపోర్ట్ చేయదు.");
                 return;
             }
             
             try {
                 const recognition = new SpeechRecognition();
-                recognition.lang = 'te-IN'; // తెలుగు వాయిస్ రికగ్నిషన్
-                recognition.interimResults = false;
-                
-                recognition.onstart = function() {
-                    console.log("Listening started...");
-                };
-
+                recognition.lang = 'te-IN';
                 recognition.onresult = function(event) {
-                    const speechToText = event.results[0][0].transcript;
-                    document.getElementById('userInput').value = speechToText;
+                    document.getElementById('userInput').value = event.results[0][0].transcript;
                 };
-
-                recognition.onerror = function(event) {
-                    alert("మైక్ పర్మిషన్ లేదా నెట్‌వర్క్ సమస్య ఉంది. క్రోమ్ బ్రౌజర్ సెట్టింగ్స్‌లో మైక్ పర్మిషన్ 'Allow' చేయండి.");
+                recognition.onerror = function() {
+                    alert("మైక్ పర్మిషన్ చెక్ చేయండి.");
                 };
-
                 recognition.start();
             } catch (e) {
                 alert("మైక్ రన్ చేయడం కుదరలేదు.");
