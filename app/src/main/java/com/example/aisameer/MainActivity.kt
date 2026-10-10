@@ -166,11 +166,9 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                     font-size: 14px;
                 }
                 .ic-red { background: rgba(239, 68, 68, 0.2); color: #EF4444; }
-                .ic-purple { background: rgba(168, 85, 247, 0.2); color: #AB55F7; }
-                .ic-amber { background: rgba(245, 158, 11, 0.2); color: #F59E0B; }
-                .ic-blue { background: rgba(59, 130, 246, 0.2); color: #3B82F6; }
                 .ic-pink { background: rgba(236, 72, 153, 0.2); color: #EC4899; }
                 .ic-indigo { background: rgba(99, 102, 241, 0.2); color: #6366F1; }
+                .ic-amber { background: rgba(245, 158, 11, 0.2); color: #F59E0B; }
                 
                 .output-box {
                     background: #111833;
@@ -315,41 +313,37 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                     var file = event.target.files[0];
                     if (file) {
                         document.getElementById('userInput').value = "Image: " + file.name;
-                        showResult("🖼️ AI Image Analysis Result:", "Successfully loaded " + file.name + ".\n\n🤖 AI Sameer Answer:\nఇది మీ SK MD Riding TV ప్రాజెక్ట్ లేదా అవసరమైన అంశానికి సంబంధించిన ఫోటో. దీనిలోని వివరాలు విజయవంతంగా విశ్లేషించబడ్డాయి!", true);
+                        showResult("AI Image Analysis", "Loaded " + file.name + ". AI analysis completed successfully for your project.", true);
                     }
                 }
 
-                function showResult(title, rawContent, showUpload) {
+                function showResult(title, content, showUpload) {
                     var box = document.getElementById('outputBox');
                     box.style.display = 'block';
+                    var html = "<b>" + title + "</b><br><br>" + content;
+                    html += "<br><br><button class='tts-speaker-btn' onclick='AndroidApp.speakText(\"" + content.replace(/"/g, '') + "\")'>🔊 Listen</button>";
                     
-                    var plainText = rawContent.replace(/<[^>]*>?/gm, '');
-                    
-                    var html = "<b>" + title + "</b><br><br>" + rawContent;
-                    html += "<br><br><button class='tts-speaker-btn' onclick='AndroidApp.speakText(\"" + plainText.replace(/"/g, '\\"') + "\")'>🔊 Listen to Answer</button>";
-
                     if(showUpload) {
-                        html += "<br><br><button onclick='uploadToYouTube()' style='background:#FF0000; color:white; border:none; padding:10px 16px; border-radius:8px; font-weight:bold; cursor:pointer;'>🚀 Upload to YouTube Studio / Test Video</button>";
+                        html += "<br><br><button onclick='uploadToYouTube()' style='background:#FF0000; color:white; border:none; padding:10px 16px; border-radius:8px; font-weight:bold; cursor:pointer;'>🚀 Upload / Test Video</button>";
                     }
                     box.innerHTML = html;
-                    
-                    AndroidApp.speakText(plainText);
+                    AndroidApp.speakText(content);
                 }
 
                 function runAIAction(type) {
                     var val = document.getElementById('userInput').value.trim();
-                    if(!val) val = "AI Sameer Assistant Query";
+                    if(!val) val = "SK MD Riding TV Project";
 
                     if(type === 'youtube') {
-                        showResult("🎬 YouTube Script & Answer:", "<b>Query:</b> " + val + "<br><br>1. Hook: Welcome back to SK MD Riding TV!<br>2. Core Content: Detailed explanation and smart breakdown for your topic.<br>3. Outro: Like and subscribe for more tech updates!", true);
+                        showResult("YouTube Script", "Hook: Welcome to SK MD Riding TV! Core: Explaining " + val + ". Outro: Subscribe now!", true);
                     } else if(type === 'txt2img') {
-                        showResult("🎨 Text-to-Image Generation:", "<b>Prompt:</b> " + val + "<br><br>🎨 AI Image generated successfully inside AI Sameer app! High-resolution graphic concept is ready for your project.");
+                        showResult("Text to Image", "Generated AI graphic concept for: " + val + " successfully inside AI Sameer.");
                     } else if(type === 'txt2vid') {
-                        showResult("🎥 Text-to-Video Generation:", "<b>Prompt:</b> " + val + "<br><br>🎥 AI Video sequence generated successfully! Cinematic video model rendered for your SK MD Riding TV channel.", true);
+                        showResult("Text to Video", "Generated cinematic video model for: " + val + " ready for your channel.", true);
                     } else if(type === 'summary') {
-                        showResult("📄 Document Summary:", "<b>Query:</b> " + val + "<br><br>Key takeaways: The requested content has been comprehensively summarized for you.");
+                        showResult("Document Summary", "Summary and key takeaways generated for: " + val);
                     } else {
-                        showResult("🔍 AI Assistant Answer:", "<b>Query:</b> " + val + "<br><br>సమాచారం: మీరు అడిగిన ప్రశ్నకు సంబంధించిన పూర్తి వివరాలు ఇక్కడ యాప్‌లోనే అందించబడ్డాయి.");
+                        showResult("AI Assistant", "Answer for query: " + val);
                     }
                 }
 
@@ -358,7 +352,7 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                     if(val) {
                         runAIAction('search');
                     } else {
-                        alert("Please enter a question or topic first!");
+                        alert("Please enter a text first!");
                     }
                 }
 
@@ -372,7 +366,7 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                         box.style.display = 'none';
                     } else {
                         box.style.display = 'block';
-                        box.innerHTML = "<b>" + tab.toUpperCase() + " Section:</b><br><br>Feature active and ready inside AI Sameer.";
+                        box.innerHTML = "<b>" + tab.toUpperCase() + " Section:</b><br><br>Ready.";
                     }
                 }
             </script>
@@ -442,4 +436,13 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                 null
             }
             uploadMessage?.onReceiveValue(results)
-       
+            uploadMessage = null
+        }
+    }
+
+    override fun onDestroy() {
+        tts?.stop()
+        tts?.shutdown()
+        super.onDestroy()
+    }
+}
