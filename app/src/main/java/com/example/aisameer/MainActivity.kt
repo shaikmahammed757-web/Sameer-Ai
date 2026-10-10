@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.speech.RecognizerIntent
+import android.speech.tts.TextToSpeech
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -16,16 +17,20 @@ import android.webkit.ValueCallback
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import java.util.Locale
 
-class MainActivity : Activity() {
+class MainActivity : Activity(), TextToSpeech.OnInitListener {
     private val RECORD_AUDIO_REQUEST_CODE = 101
     private val SPEECH_REQUEST_CODE = 102
     private val FILE_CHOOSER_REQUEST_CODE = 103
     private var uploadMessage: ValueCallback<Array<Uri>>? = null
     private var webViewInstance: WebView? = null
+    private var tts: TextToSpeech? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        tts = TextToSpeech(this, this)
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), RECORD_AUDIO_REQUEST_CODE)
@@ -118,11 +123,26 @@ class MainActivity : Activity() {
                 }
                 .greeting-title { font-size: 18px; font-weight: 700; color: #F8FAFC; margin-bottom: 4px; }
                 .greeting-sub { font-size: 13px; color: #38BDF8; }
+                
+                /* గెమిని లాగా అన్ని టూల్స్ ఒకే చోట గుంపుగా ఉండే సెక్షన్ */
+                .tools-container {
+                    background: #0F172A;
+                    border: 1px solid #1E2938;
+                    border-radius: 20px;
+                    padding: 14px;
+                    margin-bottom: 20px;
+                }
+                .tools-heading {
+                    font-size: 13px;
+                    font-weight: 700;
+                    color: #94A3B8;
+                    margin-bottom: 10px;
+                    padding-left: 4px;
+                }
                 .grid {
                     display: grid;
                     grid-template-columns: 1fr 1fr;
                     gap: 10px;
-                    margin-bottom: 20px;
                 }
                 .grid-btn {
                     background: #111833;
@@ -152,6 +172,7 @@ class MainActivity : Activity() {
                 .ic-amber2 { background: rgba(234, 179, 8, 0.2); color: #EAB308; }
                 .ic-emerald { background: rgba(16, 185, 129, 0.2); color: #10B981; }
                 .ic-blue { background: rgba(59, 130, 246, 0.2); color: #3B82F6; }
+                
                 .output-box {
                     background: #111833;
                     border: 1px solid #1E2938;
@@ -163,6 +184,20 @@ class MainActivity : Activity() {
                     display: none;
                     line-height: 1.6;
                     white-space: pre-wrap;
+                }
+                .tts-speaker-btn {
+                    background: rgba(0, 198, 255, 0.2);
+                    color: #00C6FF;
+                    border: 1px solid #00C6FF;
+                    padding: 6px 12px;
+                    border-radius: 8px;
+                    font-size: 12px;
+                    font-weight: bold;
+                    cursor: pointer;
+                    margin-top: 10px;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
                 }
                 .input-bar {
                     position: fixed;
@@ -231,30 +266,34 @@ class MainActivity : Activity() {
 
             <div class="output-box" id="outputBox"></div>
 
-            <div class="grid" id="actionGrid">
-                <div class="grid-btn" onclick="runAIAction('youtube')">
-                    <div class="btn-icon ic-red">▶</div>
-                    <div>Concept to<br>YouTube Script</div>
-                </div>
-                <div class="grid-btn" onclick="runAIAction('image')">
-                    <div class="btn-icon ic-purple">🖼</div>
-                    <div>Create<br>an image</div>
-                </div>
-                <div class="grid-btn" onclick="runAIAction('summary')">
-                    <div class="btn-icon ic-amber">📄</div>
-                    <div>Summarize<br>a document</div>
-                </div>
-                <div class="grid-btn" onclick="runAIAction('ideas')">
-                    <div class="btn-icon ic-amber2">💡</div>
-                    <div>Give me<br>ideas</div>
-                </div>
-                <div class="grid-btn" onclick="runAIAction('translate')">
-                    <div class="btn-icon ic-emerald">abc</div>
-                    <div>Translate<br>text</div>
-                </div>
-                <div class="grid-btn" onclick="runAIAction('search')">
-                    <div class="btn-icon ic-blue">🔍</div>
-                    <div>Search<br>the web</div>
+            <!-- అన్ని టూల్స్ ఒకే చోట గుంపుగా (Gemini Style Container) -->
+            <div class="tools-container">
+                <div class="tools-heading">⚡ AI Assistant Features & Tools</div>
+                <div class="grid" id="actionGrid">
+                    <div class="grid-btn" onclick="runAIAction('youtube')">
+                        <div class="btn-icon ic-red">▶</div>
+                        <div>Concept to<br>YouTube Script</div>
+                    </div>
+                    <div class="grid-btn" onclick="runAIAction('image')">
+                        <div class="btn-icon ic-purple">🖼</div>
+                        <div>Create<br>an image</div>
+                    </div>
+                    <div class="grid-btn" onclick="runAIAction('summary')">
+                        <div class="btn-icon ic-amber">📄</div>
+                        <div>Summarize<br>a document</div>
+                    </div>
+                    <div class="grid-btn" onclick="runAIAction('ideas')">
+                        <div class="btn-icon ic-amber2">💡</div>
+                        <div>Give me<br>ideas</div>
+                    </div>
+                    <div class="grid-btn" onclick="runAIAction('translate')">
+                        <div class="btn-icon ic-emerald">abc</div>
+                        <div>Translate<br>text</div>
+                    </div>
+                    <div class="grid-btn" onclick="runAIAction('search')">
+                        <div class="btn-icon ic-blue">🔍</div>
+                        <div>Search<br>the web</div>
+                    </div>
                 </div>
             </div>
 
@@ -279,7 +318,7 @@ class MainActivity : Activity() {
             <script>
                 function setVoiceResult(text) {
                     document.getElementById('userInput').value = text;
-                    sendQuery(); // మాట్లాడగానే ఆటోమేటిక్‌గా ఆన్సర్ యాప్‌లోనే చూపించడానికి
+                    sendQuery();
                 }
 
                 function handleFileSelect(event) {
@@ -290,14 +329,23 @@ class MainActivity : Activity() {
                     }
                 }
 
-                function showResult(title, content, showUpload) {
+                function showResult(title, rawContent, showUpload) {
                     var box = document.getElementById('outputBox');
                     box.style.display = 'block';
-                    var html = "<b>" + title + "</b><br><br>" + content;
+                    
+                    // క్లీన్ టెక్స్ట్ తయారు చేసి స్పీకర్ బటన్‌కి పంపడం
+                    var plainText = rawContent.replace(/<[^>]*>?/gm, '');
+                    
+                    var html = "<b>" + title + "</b><br><br>" + rawContent;
+                    html += "<br><br><button class='tts-speaker-btn' onclick='AndroidApp.speakText(\"" + plainText.replace(/"/g, '\\"') + "\")'>🔊 Listen to Answer</button>";
+
                     if(showUpload) {
                         html += "<br><br><button onclick='uploadToYouTube()' style='background:#FF0000; color:white; border:none; padding:10px 16px; border-radius:8px; font-weight:bold; cursor:pointer;'>🚀 Upload to YouTube Studio / Test Video</button>";
                     }
                     box.innerHTML = html;
+                    
+                    // ఆన్సర్ రాగానే ఆటోమేటిక్‌గా వాయిస్ ద్వారా చదివి వినిపించేలా
+                    AndroidApp.speakText(plainText);
                 }
 
                 function runAIAction(type) {
@@ -322,7 +370,7 @@ class MainActivity : Activity() {
                 function sendQuery() {
                     var val = document.getElementById('userInput').value.trim();
                     if(val) {
-                        runAIAction('search'); // గూగుల్ కి వెళ్లకుండా యాప్‌లోనే ఆన్సర్ చూపించేలా సెట్ చేయబడింది
+                        runAIAction('search');
                     } else {
                         alert("Please enter a question or topic first!");
                     }
@@ -350,6 +398,12 @@ class MainActivity : Activity() {
         setContentView(webView)
     }
 
+    override fun onInit(status: Int) {
+        if (status == TextToSpeech.SUCCESS) {
+            tts?.language = Locale("te", "IN") // తెలుగు వాయిస్ సపోర్ట్
+        }
+    }
+
     class WebAppInterface(private val activity: MainActivity) {
         @JavascriptInterface
         fun startVoiceInput() {
@@ -368,36 +422,14 @@ class MainActivity : Activity() {
         }
 
         @JavascriptInterface
+        fun speakText(text: String) {
+            activity.tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
+        }
+
+        @JavascriptInterface
         fun openYouTubeUpload() {
             try {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://studio.youtube.com"))
                 activity.startActivity(intent)
             } catch (e: Exception) {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/upload"))
-                activity.startActivity(intent)
-            }
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
-            val results = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
-            val spokenText = results?.get(0) ?: ""
-            if (spokenText.isNotEmpty()) {
-                webViewInstance?.post {
-                    webViewInstance?.evaluateJavascript("setVoiceResult('$spokenText');", null)
-                }
-            }
-        } else if (requestCode == FILE_CHOOSER_REQUEST_CODE) {
-            if (uploadMessage == null) return
-            val results = if (resultCode == RESULT_OK && data != null) {
-                arrayOf(data.data!!)
-            } else {
-                null
-            }
-            uploadMessage?.onReceiveValue(results)
-            uploadMessage = null
-        }
-    }
-}
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("ht
