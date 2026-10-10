@@ -168,8 +168,6 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                 .ic-red { background: rgba(239, 68, 68, 0.2); color: #EF4444; }
                 .ic-purple { background: rgba(168, 85, 247, 0.2); color: #AB55F7; }
                 .ic-amber { background: rgba(245, 158, 11, 0.2); color: #F59E0B; }
-                .ic-amber2 { background: rgba(234, 179, 8, 0.2); color: #EAB308; }
-                .ic-emerald { background: rgba(16, 185, 129, 0.2); color: #10B981; }
                 .ic-blue { background: rgba(59, 130, 246, 0.2); color: #3B82F6; }
                 .ic-pink { background: rgba(236, 72, 153, 0.2); color: #EC4899; }
                 .ic-indigo { background: rgba(99, 102, 241, 0.2); color: #6366F1; }
@@ -274,10 +272,6 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                         <div class="btn-icon ic-red">▶</div>
                         <div>Concept to<br>YouTube Script</div>
                     </div>
-                    <div class="grid-btn" onclick="runAIAction('image')">
-                        <div class="btn-icon ic-purple">🖼</div>
-                        <div>Create<br>an image</div>
-                    </div>
                     <div class="grid-btn" onclick="runAIAction('txt2img')">
                         <div class="btn-icon ic-pink">🎨</div>
                         <div>Text to<br>Image</div>
@@ -289,10 +283,6 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                     <div class="grid-btn" onclick="runAIAction('summary')">
                         <div class="btn-icon ic-amber">📄</div>
                         <div>Summarize<br>document</div>
-                    </div>
-                    <div class="grid-btn" onclick="runAIAction('search')">
-                        <div class="btn-icon ic-blue">🔍</div>
-                        <div>Search<br>the web</div>
                     </div>
                 </div>
             </div>
@@ -352,13 +342,13 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
 
                     if(type === 'youtube') {
                         showResult("🎬 YouTube Script & Answer:", "<b>Query:</b> " + val + "<br><br>1. Hook: Welcome back to SK MD Riding TV!<br>2. Core Content: Detailed explanation and smart breakdown for your topic.<br>3. Outro: Like and subscribe for more tech updates!", true);
-                    } else if(type === 'image' || type === 'txt2img') {
+                    } else if(type === 'txt2img') {
                         showResult("🎨 Text-to-Image Generation:", "<b>Prompt:</b> " + val + "<br><br>🎨 AI Image generated successfully inside AI Sameer app! High-resolution graphic concept is ready for your project.");
                     } else if(type === 'txt2vid') {
                         showResult("🎥 Text-to-Video Generation:", "<b>Prompt:</b> " + val + "<br><br>🎥 AI Video sequence generated successfully! Cinematic video model rendered for your SK MD Riding TV channel.", true);
                     } else if(type === 'summary') {
                         showResult("📄 Document Summary:", "<b>Query:</b> " + val + "<br><br>Key takeaways: The requested content has been comprehensively summarized for you.");
-                    } else if(type === 'search') {
+                    } else {
                         showResult("🔍 AI Assistant Answer:", "<b>Query:</b> " + val + "<br><br>సమాచారం: మీరు అడిగిన ప్రశ్నకు సంబంధించిన పూర్తి వివరాలు ఇక్కడ యాప్‌లోనే అందించబడ్డాయి.");
                     }
                 }
@@ -437,4 +427,19 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
-            val results = data?.get
+            val results = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            val spokenText = results?.get(0) ?: ""
+            if (spokenText.isNotEmpty()) {
+                webViewInstance?.post {
+                    webViewInstance?.evaluateJavascript("setVoiceResult('$spokenText');", null)
+                }
+            }
+        } else if (requestCode == FILE_CHOOSER_REQUEST_CODE) {
+            if (uploadMessage == null) return
+            val results = if (resultCode == RESULT_OK && data != null) {
+                arrayOf(data.data!!)
+            } else {
+                null
+            }
+            uploadMessage?.onReceiveValue(results)
+       
