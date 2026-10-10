@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ai Sameer Pro</title>
-    <!-- PWA Manifest Link -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0b0f19">
     <style>
@@ -33,20 +32,37 @@
             align-items: center;
             text-align: center;
             padding: 20px;
+            overflow-y: auto;
         }
         .features-grid {
             display: flex;
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
         .feature-btn {
             background-color: #1e293b;
             border: none;
             color: white;
-            padding: 12px 20px;
-            border-radius: 12px;
+            padding: 10px 18px;
+            border-radius: 20px;
             cursor: pointer;
             font-size: 14px;
+        }
+        .menu-list {
+            width: 100%;
+            max-width: 400px;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .menu-item {
+            background-color: #121826;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 12px;
+            font-size: 15px;
+            border: 1px solid #1f293d;
         }
         .input-box {
             display: flex;
@@ -91,6 +107,12 @@
             <button class="feature-btn">Avatar</button>
         </div>
 
+        <div class="menu-list">
+            <div class="menu-item">Images <span style="font-size: 12px; color: #94a3b8; display: block;">Create and edit</span></div>
+            <div class="menu-item">Music <span style="font-size: 12px; color: #94a3b8; display: block;">Make audio tracks</span></div>
+            <div class="menu-item">Canvas <span style="font-size: 12px; color: #94a3b8; display: block;">Code, write or make slides</span></div>
+        </div>
+
         <div class="input-box">
             <input type="text" id="userInput" placeholder="Ask Ai Sameer...">
             <button onclick="startVoiceRecognition()" title="Voice Input">🎤</button>
@@ -99,34 +121,34 @@
     </div>
 
     <script>
-        // Service Worker Registration for PWA Install Prompt
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then((reg) => console.log('Service Worker registered', reg))
-                    .catch((err) => console.log('Service Worker failed', err));
+                navigator.serviceWorker.register('sw.js');
             });
         }
 
         function startVoiceRecognition() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
-                alert("మీ బ్రౌజర్ వాయిస్ రికగ్నిషన్‌ని సపోర్ట్ చేయదు.");
+                alert("ఈ బ్రౌజర్‌లో వాయిస్ రికగ్నిషన్ సపోర్ట్ చేయదు. దయచేసి టైప్ చేయండి.");
                 return;
             }
             
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'te-IN';
-            recognition.start();
+            try {
+                const recognition = new SpeechRecognition();
+                recognition.lang = 'te-IN';
+                recognition.start();
 
-            recognition.onresult = function(event) {
-                const speechToText = event.results[0][0].transcript;
-                document.getElementById('userInput').value = speechToText;
-            };
+                recognition.onresult = function(event) {
+                    document.getElementById('userInput').value = event.results[0][0].transcript;
+                };
 
-            recognition.onerror = function(event) {
-                alert("మైక్ రికగ్నిషన్‌లో లోపం ఏర్పడింది. దయచేసి మళ్లీ ప్రయత్నించండి.");
-            };
+                recognition.onerror = function(event) {
+                    alert("మైక్ పర్మిషన్ లేదా నెట్‌వర్క్ లోపం ఉంది.");
+                };
+            } catch (e) {
+                alert("మైక్ రన్ చేయడం కుదరలేదు.");
+            }
         }
 
         function sendMessage() {
