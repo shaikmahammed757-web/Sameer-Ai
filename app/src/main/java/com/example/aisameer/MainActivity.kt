@@ -1,31 +1,48 @@
 package com.example.aisameer
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.speech.RecognizerIntent
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.webkit.WebChromeClient
 import android.webkit.PermissionRequest
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import java.util.Locale
 
 class MainActivity : Activity() {
+    private val RECORD_AUDIO_REQUEST_CODE = 101
+    private val SPEECH_REQUEST_CODE = 102
+    private var webViewInstance: WebView? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val webView = WebView(this)
-        webView.settings.javaScriptEnabled = true
-        webView.settings.domStorageEnabled = true
-        webView.webViewClient = WebViewClient()
-        
-        webView.webChromeClient = object : WebChromeClient() {
-            override fun onPermissionRequest(request: PermissionRequest) {
-                request.grant(request.resources)
-            }
+        // మైక్ పర్మిషన్ చెక్
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), RECORD_AUDIO_REQUEST_CODE)
         }
 
-        webView.addJavascriptInterface(WebAppInterface(this), "AndroidApp")
+        val webView = WebView(this).apply {
+            settings.javaScriptEnabled = true
+            settings.domStorageEnabled = true
+            webViewClient = WebViewClient()
+            webChromeClient = object : WebChromeClient() {
+                override fun onPermissionRequest(request: PermissionRequest) {
+                    request.grant(request.resources)
+                }
+            }
+            addJavascriptInterface(WebAppInterface(this@MainActivity), "AndroidApp")
+        }
+        
+        webViewInstance = webView
 
         val htmlContent = """
         <!DOCTYPE html>
@@ -222,7 +239,8 @@ class MainActivity : Activity() {
                 <span class="action-icon">🖼️</span>
                 <span class="action-icon">📎</span>
                 <input type="text" id="userInput" placeholder="Ask AI Sameer anything...">
-                <span class="action-icon" id="micButton" onclick="startVoiceInput()" title="Speak">🎙️</span>
+                <!-- మైక్ క్లిక్ చేస్తే నేటివ్ ఆండ్రాయిడ్ స్పీచ్ రికగ్నిషన్ ట్రిగ్గర్ అవుతుంది -->
+                <span class="action-icon" id="micButton" onclick="AndroidApp.startVoiceInput()" title="Speak">🎙️</span>
                 <div class="send-circle" onclick="sendQuery()">➔</div>
             </div>
 
@@ -235,27 +253,8 @@ class MainActivity : Activity() {
             </div>
 
             <script>
-                function startVoiceInput() {
-                    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-                        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                        const recognition = new SpeechRecognition();
-                        recognition.lang = 'te-IN';
-                        recognition.interimResults = false;
-                        recognition.maxAlternatives = 1;
-
-                        recognition.onresult = function(event) {
-                            const speechResult = event.results[0][0].transcript;
-                            document.getElementById('userInput').value = speechResult;
-                        };
-
-                        recognition.onerror = function(event) {
-                            alert("Mic Error: " + event.error);
-                        };
-
-                        recognition.start();
-                    } else {
-                        alert("Speech recognition not supported.");
-                    }
+                function setVoiceResult(text) {
+                    document.getElementById('userInput').value = text;
                 }
 
                 function showResult(title, content, showUpload) {
@@ -317,23 +316,53 @@ class MainActivity : Activity() {
         webView.loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null)
         setContentView(webView)
     }
-}
 
-class WebAppInterface(private val activity: Activity) {
-    @JavascriptInterface
-    fun openYouTubeUpload() {
-        try {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://studio.youtube.com"))
-            activity.startActivity(intent)
-        } catch (e: Exception) {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/upload"))
+    class WebAppInterface(private val activity: MainActivity) {
+        @JavascriptInterface
+        fun startVoiceInput() {
+            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE, "te-IN") // తెలుగు భాష మద్దతు
+                putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now...")
+            }
+            try {
+                activity.startActivityForResult(intent, activity.SPEECH_REQUEST_CODE)
+            } catch (e: Exception) {
+                activity.runOnUiThread {
+                    Toast.makeText(activity, "Speech recognition not supported on this device", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        @JavascriptInterface
+        fun openYouTubeUpload() {
+            try {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://studio.youtube.com"))
+                activity.startActivity(intent)
+            } catch (e: Exception) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/upload"))
+                activity.startActivity(intent)
+            }
+        }
+
+        @JavascriptInterface
+        fun openWebSearch(query: String) {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?q=$query"))
             activity.startActivity(intent)
         }
     }
 
-    @JavascriptInterface
-    fun openWebSearch(query: String) {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?q=$query"))
-        activity.startActivity(intent)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
+            val results = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            val spokenText = results?.get(0) ?: ""
+            if (spokenText.isNotEmpty()) {
+                // మైక్ ద్వారా మాట్లాడిన మాటలను జావాస్క్రిప్ట్ ద్వారా ఇన్‌పుట్ బాక్స్‌లో పంపుతుంది
+                webViewInstance?.post {
+                    webViewInstance?.evaluateJavascript("setVoiceResult('$spokenText');", null)
+                }
+            }
+        }
     }
 }
