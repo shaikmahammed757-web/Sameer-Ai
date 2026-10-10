@@ -21,7 +21,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 15px;
+            padding: 15px 20px;
             background-color: #0b0f19;
             flex-shrink: 0;
         }
@@ -29,12 +29,15 @@
             background: transparent;
             border: none;
             color: white;
-            font-size: 20px;
+            font-size: 22px;
             cursor: pointer;
         }
         .header-title {
             font-size: 18px;
             font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         .main-container {
             flex: 1;
@@ -43,71 +46,29 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 10px 15px;
-            overflow-y: auto;
+            padding: 20px;
             position: relative;
         }
-        .content-area {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            max-width: 600px;
-            margin-bottom: 20px;
-        }
-        .logo-icon {
-            font-size: 28px;
-            margin-bottom: 5px;
-        }
-        h2 {
-            margin-top: 0;
-            margin-bottom: 20px;
-            font-weight: 400;
-            font-size: 24px;
-        }
-        .features-grid {
-            display: flex;
-            gap: 8px;
+        .gemini-sparkle {
+            font-size: 36px;
             margin-bottom: 15px;
-            flex-wrap: wrap;
-            justify-content: center;
+            background: linear-gradient(42deg, #4285F4, #9B72CB, #EA4335);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        .feature-btn {
-            background-color: #1e293b;
-            border: none;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 13px;
+        .welcome-text {
+            font-size: 26px;
+            font-weight: 400;
+            color: #e2e8f0;
+            line-height: 1.4;
+            max-width: 400px;
         }
-        .feature-list {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .list-item {
-            background-color: #161b22;
-            border: 1px solid #30363d;
-            padding: 8px 12px;
-            border-radius: 12px;
-            text-align: left;
-            cursor: pointer;
-        }
-        .list-item strong {
-            display: block;
-            font-size: 13px;
-        }
-        .list-item small {
-            color: #8b949e;
-            font-size: 11px;
-        }
+        /* Bottom Input Box Container */
         .input-box-wrapper {
             position: relative;
-            width: 90%;
-            max-width: 600px;
-            margin-top: 10px;
+            width: 92%;
+            max-width: 650px;
+            margin-bottom: 25px;
             flex-shrink: 0;
         }
         .input-box {
@@ -115,7 +76,7 @@
             align-items: center;
             background-color: #171c28;
             border: 1px solid #2d3748;
-            padding: 8px 15px;
+            padding: 10px 18px;
             border-radius: 35px;
             width: 100%;
             box-sizing: border-box;
@@ -124,41 +85,49 @@
             background: transparent;
             border: none;
             color: #ffffff;
-            font-size: 22px;
+            font-size: 24px;
             cursor: pointer;
-            margin-right: 12px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
         }
         .input-box input {
             flex: 1;
             background: transparent;
             border: none;
             color: white;
-            font-size: 15px;
+            font-size: 16px;
             outline: none;
+        }
+        .input-box input::placeholder {
+            color: #94a3b8;
         }
         .action-btns {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
         .mic-btn, .send-btn {
             background: transparent;
             border: none;
             color: #ffffff;
             cursor: pointer;
-            font-size: 17px;
+            font-size: 20px;
             padding: 5px;
+            display: flex;
+            align-items: center;
         }
+        /* Popup Menu properly positioned */
         .plus-popup {
             display: none;
             position: absolute;
-            bottom: 60px;
+            bottom: 70px;
             left: 0;
             background-color: #1a2234;
             border: 1px solid #30363d;
             border-radius: 16px;
-            width: 220px;
-            box-shadow: 0px 10px 30px rgba(0,0,0,0.7);
+            width: 240px;
+            box-shadow: 0px 10px 30px rgba(0,0,0,0.8);
             z-index: 1000;
             text-align: left;
             overflow: hidden;
@@ -167,18 +136,19 @@
             display: block;
         }
         .popup-item {
-            padding: 12px 16px;
-            font-size: 13px;
+            padding: 14px 18px;
+            font-size: 14px;
             color: #ffffff;
             cursor: pointer;
             border-bottom: 1px solid #21262d;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
         .popup-item:hover {
             background-color: #28334a;
         }
+        /* Sidebar */
         .sidebar {
             position: fixed;
             top: 0;
@@ -218,7 +188,9 @@
 
     <header>
         <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-        <div class="header-title">Ai Sameer</div>
+        <div class="header-title">
+            <span>Gemini Auto</span> ▾
+        </div>
         <button class="top-icon-btn" onclick="location.reload()">✏️</button>
     </header>
 
@@ -236,30 +208,9 @@
     </div>
 
     <div class="main-container">
-        <div class="content-area">
-            <div class="logo-icon">✨</div>
-            <h2>Ai Sameer</h2>
-            
-            <div class="features-grid">
-                <button class="feature-btn" onclick="alert('Photos clicked')">Photos</button>
-                <button class="feature-btn" onclick="alert('Camera clicked')">Camera</button>
-                <button class="feature-btn" onclick="alert('Avatar clicked')">Avatar</button>
-            </div>
-
-            <div class="feature-list">
-                <div class="list-item" onclick="alert('Images feature')">
-                    <strong>Images</strong>
-                    <small>Create and edit images</small>
-                </div>
-                <div class="list-item" onclick="alert('Music feature')">
-                    <strong>Music</strong>
-                    <small>Make audio tracks</small>
-                </div>
-                <div class="list-item" onclick="alert('Canvas feature')">
-                    <strong>Canvas</strong>
-                    <small>Code, write or make slides</small>
-                </div>
-            </div>
+        <div>
+            <div class="gemini-sparkle">✦</div>
+            <div class="welcome-text">The mic is yours, Shaik</div>
         </div>
 
         <div class="input-box-wrapper">
@@ -272,7 +223,7 @@
 
             <div class="input-box">
                 <button class="plus-btn" onclick="togglePlusMenu(event)">＋</button>
-                <input type="text" id="userInput" placeholder="Ask Ai Sameer...">
+                <input type="text" id="userInput" placeholder="Ask Gemini">
                 <div class="action-btns">
                     <button class="mic-btn" onclick="startVoiceRecognition()" title="Voice Input">🎤</button>
                     <button class="send-btn" onclick="sendMessage()">➤</button>
@@ -321,7 +272,7 @@
                 };
                 
                 recognition.onerror = function(event) {
-                    alert("మైక్ పర్మిషన్ లేదా నెట్‌వర్క్ సమస్య ఉంది.");
+                    alert("మైక్ పర్మిషన్ లేదా నెట్‌వర్క్ సమస్య ఉంది. క్రోమ్ బ్రౌజర్‌లో మైక్ పర్మిషన్ Allow చేయబడిందో లేదో చెక్ చేయండి.");
                 };
                 
                 recognition.start();
