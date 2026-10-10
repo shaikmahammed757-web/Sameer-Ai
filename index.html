@@ -11,11 +11,31 @@
         body { background-color: #0b0f19; color: #ffffff; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
         /* App Header */
-        header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: rgba(11, 15, 25, 0.95); border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: rgba(11, 15, 25, 0.95); border-bottom: 1px solid rgba(255, 255, 255, 0.08); z-index: 10; }
         .header-left { display: flex; align-items: center; gap: 12px; }
-        .menu-icon { font-size: 20px; cursor: pointer; color: #fff; }
+        .menu-icon { font-size: 20px; cursor: pointer; color: #fff; padding: 4px; }
         .model-selector { display: flex; align-items: center; gap: 6px; font-size: 16px; font-weight: 600; color: #fff; cursor: pointer; }
-        .header-right { font-size: 20px; cursor: pointer; color: #fff; }
+        .header-right { font-size: 20px; cursor: pointer; color: #fff; padding: 4px; }
+
+        /* Side Navigation Drawer */
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; z-index: 200; transition: 0.3s; }
+        .side-drawer { position: fixed; top: 0; left: -300px; width: 280px; height: 100%; background: #111827; z-index: 210; display: flex; flex-direction: column; transition: left 0.3s ease; box-shadow: 4px 0 15px rgba(0,0,0,0.5); }
+        .side-drawer.open { left: 0; }
+        
+        .drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 18px; font-weight: 600; color: #fff; }
+        .drawer-close { font-size: 22px; cursor: pointer; color: #94a3b8; }
+        
+        .drawer-content { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 4px; }
+        .drawer-item { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 12px; cursor: pointer; color: #e2e8f0; font-size: 14px; transition: background 0.2s; }
+        .drawer-item:hover { background: rgba(255,255,255,0.05); }
+        .drawer-item span { font-size: 18px; }
+        
+        .drawer-section-title { font-size: 12px; color: #94a3b8; padding: 12px 14px 4px 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .drawer-footer { padding: 12px 16px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; }
+        .user-profile { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; color: #fff; }
+        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: #3b82f6; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .settings-icon { font-size: 18px; cursor: pointer; color: #94a3b8; }
 
         /* Welcome Center Screen */
         .welcome-screen { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; gap: 16px; }
@@ -23,10 +43,20 @@
         .welcome-screen h2 { font-size: 26px; font-weight: 500; color: #f8fafc; }
 
         /* Chat Container */
-        .chat-container { flex: 1; overflow-y: auto; padding: 16px; display: none; flex-direction: column; gap: 12px; }
-        .message { max-width: 80%; padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.5; }
-        .ai-msg { background: #1e293b; align-self: flex-start; border-bottom-left-radius: 4px; }
-        .user-msg { background: #3b82f6; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .chat-container { flex: 1; overflow-y: auto; padding: 16px; display: none; flex-direction: column; gap: 16px; }
+        .message-wrapper { display: flex; flex-direction: column; gap: 6px; max-width: 85%; }
+        .user-wrapper { align-self: flex-end; }
+        .ai-wrapper { align-self: flex-start; width: 100%; }
+
+        .message { padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.5; word-break: break-word; }
+        .ai-msg { background: #1e293b; color: #fff; border-bottom-left-radius: 4px; }
+        .user-msg { background: #3b82f6; color: #fff; border-bottom-right-radius: 4px; }
+
+        /* AI Message Action Toolbar */
+        .ai-actions { display: flex; align-items: center; gap: 16px; padding: 4px 8px; color: #94a3b8; font-size: 16px; }
+        .ai-actions span { cursor: pointer; transition: color 0.2s; }
+        .ai-actions span:hover { color: #fff; }
+        .disclaimer { font-size: 11px; color: #64748b; padding-left: 8px; margin-top: 2px; }
 
         /* Input Bar */
         .input-bar-wrapper { padding: 12px 16px; background: #0b0f19; padding-bottom: calc(12px + env(safe-area-inset-bottom)); }
@@ -58,14 +88,57 @@
     <!-- Header -->
     <header>
         <div class="header-left">
-            <span class="menu-icon">☰</span>
+            <span class="menu-icon" id="menuToggleBtn">☰</span>
             <div class="model-selector">
                 <span>Ai Sameer Pro</span>
                 <span style="font-size: 12px; color: #94a3b8;">▼</span>
             </div>
         </div>
-        <div class="header-right">✏️</div>
+        <div class="header-right" id="newChatBtn" title="New Chat">✏️</div>
     </header>
+
+    <!-- Side Navigation Drawer -->
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+    <div class="side-drawer" id="sideDrawer">
+        <div class="drawer-header">
+            <span>Ai Sameer</span>
+            <span class="drawer-close" id="drawerCloseBtn">✕</span>
+        </div>
+        <div class="drawer-content">
+            <div class="drawer-item" onclick="startNewChat()">
+                <span>✏️</span> New chat
+            </div>
+            <div class="drawer-item" onclick="selectDrawerItem('Search chats')">
+                <span>🔍</span> Search chats
+            </div>
+            <div class="drawer-item" onclick="selectDrawerItem('Images')">
+                <span>🖼️</span> Images
+            </div>
+            <div class="drawer-item" onclick="selectDrawerItem('Library')">
+                <span>📁</span> Library
+            </div>
+            
+            <div class="drawer-section-title">Notebooks</div>
+            <div class="drawer-item" onclick="selectDrawerItem('New notebook')">
+                <span>➕</span> New notebook
+            </div>
+
+            <div class="drawer-section-title">Recent</div>
+            <div class="drawer-item" onclick="selectDrawerItem('Voice Input Fix')">
+                <span>💬</span> యాప్ వాయిస్ ఇన్పుట్ సమస్య పరిష్కారం
+            </div>
+            <div class="drawer-item" onclick="selectDrawerItem('AI Pipeline Review')">
+                <span>💬</span> యాప్ డెవలప్‌మెంట్ సహాయం
+            </div>
+        </div>
+        <div class="drawer-footer">
+            <div class="user-profile">
+                <div class="user-avatar">S</div>
+                <span>Shaik Mahammad</span>
+            </div>
+            <span class="settings-icon">⚙️</span>
+        </div>
+    </div>
 
     <!-- Welcome Center Screen -->
     <div class="welcome-screen" id="welcomeScreen">
@@ -86,7 +159,7 @@
         </div>
     </div>
 
-    <!-- Advanced Tools Menu Sheet -->
+    <!-- Advanced Tools Popup Menu -->
     <div class="menu-overlay" id="menuOverlay">
         <div class="menu-sheet">
             <div class="sheet-header"></div>
@@ -155,6 +228,25 @@
         const welcomeScreen = document.getElementById('welcomeScreen');
         const userInput = document.getElementById('userInput');
         const micBtn = document.getElementById('micBtn');
+        const newChatBtn = document.getElementById('newChatBtn');
+        
+        const menuToggleBtn = document.getElementById('menuToggleBtn');
+        const sideDrawer = document.getElementById('sideDrawer');
+        const drawerOverlay = document.getElementById('drawerOverlay');
+        const drawerCloseBtn = document.getElementById('drawerCloseBtn');
+
+        menuToggleBtn.addEventListener('click', () => {
+            sideDrawer.classList.add('open');
+            drawerOverlay.style.display = 'block';
+        });
+
+        function closeDrawer() {
+            sideDrawer.classList.remove('open');
+            drawerOverlay.style.display = 'none';
+        }
+
+        drawerCloseBtn.addEventListener('click', closeDrawer);
+        drawerOverlay.addEventListener('click', closeDrawer);
 
         plusBtn.addEventListener('click', () => {
             menuOverlay.style.display = 'flex';
@@ -166,14 +258,34 @@
             }
         });
 
+        function startNewChat() {
+            closeDrawer();
+            chatContainer.innerHTML = '';
+            chatContainer.style.display = 'none';
+            welcomeScreen.style.display = 'flex';
+            userInput.value = '';
+        }
+
+        newChatBtn.addEventListener('click', startNewChat);
+
+        function selectDrawerItem(itemName) {
+            closeDrawer();
+            welcomeScreen.style.display = 'none';
+            chatContainer.style.display = 'flex';
+            appendUserMsg(`Selected Menu: ${itemName}`);
+            setTimeout(() => {
+                appendAiMsg(`Ai Sameer: Opened ${itemName} successfully!`);
+            }, 500);
+        }
+
         function selectTool(toolName) {
             menuOverlay.style.display = 'none';
             welcomeScreen.style.display = 'none';
             chatContainer.style.display = 'flex';
             
-            appendMsg(`Selected Tool: ${toolName}`, 'user-msg');
+            appendUserMsg(`Selected Tool: ${toolName}`);
             setTimeout(() => {
-                appendMsg(`Ai Sameer: ${toolName} pipeline is active and ready! (Daily limits active)`, 'ai-msg');
+                appendAiMsg(`Ai Sameer: ${toolName} pipeline is active and ready! (Daily limits active)`);
             }, 500);
         }
 
@@ -227,17 +339,55 @@
             welcomeScreen.style.display = 'none';
             chatContainer.style.display = 'flex';
             userInput.value = '';
-            appendMsg(text, 'user-msg');
+            appendUserMsg(text);
             setTimeout(() => {
-                appendMsg(`Ai Sameer: Processing your request for "${text}". All AI pipelines are active!`, 'ai-msg');
+                appendAiMsg(`Ai Sameer: Processing your request for "${text}". All AI pipelines are active!`);
             }, 600);
         }
 
-        function appendMsg(text, className) {
-            const div = document.createElement('div');
-            div.className = `message ${className}`;
-            div.innerText = text;
-            chatContainer.appendChild(div);
+        function appendUserMsg(text) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'message-wrapper user-wrapper';
+            
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'message user-msg';
+            msgDiv.innerText = text;
+            
+            wrapper.appendChild(msgDiv);
+            chatContainer.appendChild(wrapper);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function appendAiMsg(text) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'message-wrapper ai-wrapper';
+            
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'message ai-msg';
+            msgDiv.innerText = text;
+
+            // AI Action Buttons Toolbar
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'ai-actions';
+            actionsDiv.innerHTML = `
+                <span title="Good response">👍</span>
+                <span title="Bad response">👎</span>
+                <span title="Retry">🔄</span>
+                <span title="Copy">📋</span>
+                <span title="More">⋯</span>
+                <span title="Listen" style="margin-left: auto;">🔊</span>
+            `;
+
+            // Disclaimer text
+            const disclaimerDiv = document.createElement('div');
+            disclaimerDiv.className = 'disclaimer';
+            disclaimerDiv.innerText = 'Ai Sameer is AI and can make mistakes.';
+
+            wrapper.appendChild(msgDiv);
+            wrapper.appendChild(actionsDiv);
+            wrapper.appendChild(disclaimerDiv);
+
+            chatContainer.appendChild(wrapper);
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
     </script>
