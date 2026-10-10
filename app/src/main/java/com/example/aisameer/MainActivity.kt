@@ -97,7 +97,6 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                     align-items: center;
                     gap: 12px;
                 }
-                .menu-icon { font-size: 22px; cursor: pointer; color: #38BDF8; font-weight: bold; }
                 .app-logo-img {
                     width: 38px;
                     height: 38px;
@@ -116,6 +115,7 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                     border: 2px solid #AB55F7;
                     box-shadow: 0 0 15px rgba(168, 85, 247, 0.6);
                 }
+                .menu-icon { font-size: 22px; cursor: pointer; color: #38BDF8; font-weight: bold; }
                 .app-title { font-size: 18px; font-weight: 800; background: linear-gradient(90deg, #00D2FF, #AB55F7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
                 .app-sub { font-size: 11px; color: #94A3B8; }
                 
@@ -134,7 +134,6 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                     cursor: pointer;
                 }
                 
-                /* సైడ్ హిస్టరీ డ్రాయర్ */
                 .sidebar {
                     position: fixed;
                     top: 0;
@@ -198,10 +197,7 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                 .greeting-title { font-size: 16px; font-weight: 700; color: #F8FAFC; margin-bottom: 2px; }
                 .greeting-sub { font-size: 12px; color: #38BDF8; }
                 
-                /* టూల్స్ గ్రిడ్ (పోస్టర్ డిజైన్ ప్రకారం) */
-                .tools-container {
-                    margin-bottom: 20px;
-                }
+                .tools-container { margin-bottom: 20px; }
                 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
                 .grid-btn {
                     background: #111833;
@@ -452,4 +448,6 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
 
                     var container = document.getElementById('chatContainer');
                     
-  
+                    var userBubble = document.createElement('div');
+                    userBubble.className = 'chat-bubble-user';
+           
