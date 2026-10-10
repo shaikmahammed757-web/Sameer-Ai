@@ -15,6 +15,7 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
+            overflow: hidden;
         }
         header {
             display: flex;
@@ -24,7 +25,14 @@
             background-color: #121826;
             border-bottom: 1px solid #1f293d;
         }
-        .chat-container {
+        .menu-btn, .new-chat-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .main-container {
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -34,10 +42,14 @@
             padding: 20px;
             overflow-y: auto;
         }
+        h2 {
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
         .features-grid {
             display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 12px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
             justify-content: center;
         }
@@ -45,24 +57,34 @@
             background-color: #1e293b;
             border: none;
             color: white;
-            padding: 10px 18px;
-            border-radius: 20px;
+            padding: 12px 20px;
+            border-radius: 12px;
             cursor: pointer;
             font-size: 14px;
         }
-        .menu-list {
+        .feature-list {
             width: 100%;
-            max-width: 400px;
-            text-align: left;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
             margin-bottom: 20px;
         }
-        .menu-item {
-            background-color: #121826;
-            padding: 12px 15px;
-            margin-bottom: 8px;
-            border-radius: 12px;
+        .list-item {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            padding: 12px 18px;
+            border-radius: 14px;
+            text-align: left;
+            cursor: pointer;
+        }
+        .list-item strong {
+            display: block;
             font-size: 15px;
-            border: 1px solid #1f293d;
+        }
+        .list-item small {
+            color: #8b949e;
+            font-size: 13px;
         }
         .input-box {
             display: flex;
@@ -90,15 +112,64 @@
             font-size: 18px;
             margin-left: 10px;
         }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            background-color: #121826;
+            transition: 0.3s;
+            z-index: 1000;
+            padding: 20px;
+            box-sizing: border-box;
+            border-right: 1px solid #1f293d;
+        }
+        .sidebar.open {
+            left: 0;
+        }
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar-menu li {
+            padding: 12px 0;
+            border-bottom: 1px solid #1f293d;
+            cursor: pointer;
+            font-size: 15px;
+        }
     </style>
 </head>
 <body>
 
     <header>
+        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
         <span style="font-size: 18px; font-weight: bold;">Ai Sameer Pro</span>
+        <button class="new-chat-btn" onclick="location.reload()">✏️</button>
     </header>
 
-    <div class="chat-container">
+    <!-- Sidebar Menu -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <h3>Ai Sameer</h3>
+            <button class="menu-btn" onclick="toggleSidebar()">✕</button>
+        </div>
+        <ul class="sidebar-menu">
+            <li onclick="alert('New chat started')">➕ New chat</li>
+            <li onclick="alert('Opening Images')">🖼️ Images</li>
+            <li onclick="alert('Opening Library')">📁 Library</li>
+            <li onclick="alert('Opening Notebooks')">📓 New notebook</li>
+        </ul>
+    </div>
+
+    <div class="main-container">
         <h2>Where should we start?</h2>
         
         <div class="features-grid">
@@ -107,10 +178,19 @@
             <button class="feature-btn">Avatar</button>
         </div>
 
-        <div class="menu-list">
-            <div class="menu-item">Images <span style="font-size: 12px; color: #94a3b8; display: block;">Create and edit</span></div>
-            <div class="menu-item">Music <span style="font-size: 12px; color: #94a3b8; display: block;">Make audio tracks</span></div>
-            <div class="menu-item">Canvas <span style="font-size: 12px; color: #94a3b8; display: block;">Code, write or make slides</span></div>
+        <div class="feature-list">
+            <div class="list-item">
+                <strong>Images</strong>
+                <small>Create and edit images</small>
+            </div>
+            <div class="list-item">
+                <strong>Music</strong>
+                <small>Make audio tracks</small>
+            </div>
+            <div class="list-item">
+                <strong>Canvas</strong>
+                <small>Code, write or make slides</small>
+            </div>
         </div>
 
         <div class="input-box">
@@ -127,28 +207,29 @@
             });
         }
 
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
         function startVoiceRecognition() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
-                alert("ఈ బ్రౌజర్‌లో వాయిస్ రికగ్నిషన్ సపోర్ట్ చేయదు. దయచేసి టైప్ చేయండి.");
+                alert("మీ బ్రౌజర్ వాయిస్ రికగ్నిషన్‌ని సపోర్ట్ చేయదు.");
                 return;
             }
             
-            try {
-                const recognition = new SpeechRecognition();
-                recognition.lang = 'te-IN';
-                recognition.start();
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'te-IN';
+            recognition.start();
 
-                recognition.onresult = function(event) {
-                    document.getElementById('userInput').value = event.results[0][0].transcript;
-                };
+            recognition.onresult = function(event) {
+                const speechToText = event.results[0][0].transcript;
+                document.getElementById('userInput').value = speechToText;
+            };
 
-                recognition.onerror = function(event) {
-                    alert("మైక్ పర్మిషన్ లేదా నెట్‌వర్క్ లోపం ఉంది.");
-                };
-            } catch (e) {
-                alert("మైక్ రన్ చేయడం కుదరలేదు.");
-            }
+            recognition.onerror = function(event) {
+                alert("మైక్ రికగ్నిషన్‌లో లోపం ఏర్పడింది. దయచేసి మళ్లీ ప్రయత్నించండి.");
+            };
         }
 
         function sendMessage() {
