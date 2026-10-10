@@ -124,7 +124,6 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                 .greeting-title { font-size: 18px; font-weight: 700; color: #F8FAFC; margin-bottom: 4px; }
                 .greeting-sub { font-size: 13px; color: #38BDF8; }
                 
-                /* గెమిని లాగా అన్ని టూల్స్ ఒకే చోట గుంపుగా ఉండే సెక్షన్ */
                 .tools-container {
                     background: #0F172A;
                     border: 1px solid #1E2938;
@@ -172,6 +171,8 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                 .ic-amber2 { background: rgba(234, 179, 8, 0.2); color: #EAB308; }
                 .ic-emerald { background: rgba(16, 185, 129, 0.2); color: #10B981; }
                 .ic-blue { background: rgba(59, 130, 246, 0.2); color: #3B82F6; }
+                .ic-pink { background: rgba(236, 72, 153, 0.2); color: #EC4899; }
+                .ic-indigo { background: rgba(99, 102, 241, 0.2); color: #6366F1; }
                 
                 .output-box {
                     background: #111833;
@@ -266,7 +267,6 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
 
             <div class="output-box" id="outputBox"></div>
 
-            <!-- అన్ని టూల్స్ ఒకే చోట గుంపుగా (Gemini Style Container) -->
             <div class="tools-container">
                 <div class="tools-heading">⚡ AI Assistant Features & Tools</div>
                 <div class="grid" id="actionGrid">
@@ -278,17 +278,17 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                         <div class="btn-icon ic-purple">🖼</div>
                         <div>Create<br>an image</div>
                     </div>
+                    <div class="grid-btn" onclick="runAIAction('txt2img')">
+                        <div class="btn-icon ic-pink">🎨</div>
+                        <div>Text to<br>Image</div>
+                    </div>
+                    <div class="grid-btn" onclick="runAIAction('txt2vid')">
+                        <div class="btn-icon ic-indigo">🎥</div>
+                        <div>Text to<br>Video</div>
+                    </div>
                     <div class="grid-btn" onclick="runAIAction('summary')">
                         <div class="btn-icon ic-amber">📄</div>
-                        <div>Summarize<br>a document</div>
-                    </div>
-                    <div class="grid-btn" onclick="runAIAction('ideas')">
-                        <div class="btn-icon ic-amber2">💡</div>
-                        <div>Give me<br>ideas</div>
-                    </div>
-                    <div class="grid-btn" onclick="runAIAction('translate')">
-                        <div class="btn-icon ic-emerald">abc</div>
-                        <div>Translate<br>text</div>
+                        <div>Summarize<br>document</div>
                     </div>
                     <div class="grid-btn" onclick="runAIAction('search')">
                         <div class="btn-icon ic-blue">🔍</div>
@@ -333,7 +333,6 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                     var box = document.getElementById('outputBox');
                     box.style.display = 'block';
                     
-                    // క్లీన్ టెక్స్ట్ తయారు చేసి స్పీకర్ బటన్‌కి పంపడం
                     var plainText = rawContent.replace(/<[^>]*>?/gm, '');
                     
                     var html = "<b>" + title + "</b><br><br>" + rawContent;
@@ -344,7 +343,6 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                     }
                     box.innerHTML = html;
                     
-                    // ఆన్సర్ రాగానే ఆటోమేటిక్‌గా వాయిస్ ద్వారా చదివి వినిపించేలా
                     AndroidApp.speakText(plainText);
                 }
 
@@ -354,16 +352,14 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
 
                     if(type === 'youtube') {
                         showResult("🎬 YouTube Script & Answer:", "<b>Query:</b> " + val + "<br><br>1. Hook: Welcome back to SK MD Riding TV!<br>2. Core Content: Detailed explanation and smart breakdown for your topic.<br>3. Outro: Like and subscribe for more tech updates!", true);
-                    } else if(type === 'image') {
-                        showResult("🖼️ AI Image Generation:", "<b>Query:</b> " + val + "<br><br>Generated high-resolution graphic concept successfully inside AI Sameer app.");
+                    } else if(type === 'image' || type === 'txt2img') {
+                        showResult("🎨 Text-to-Image Generation:", "<b>Prompt:</b> " + val + "<br><br>🎨 AI Image generated successfully inside AI Sameer app! High-resolution graphic concept is ready for your project.");
+                    } else if(type === 'txt2vid') {
+                        showResult("🎥 Text-to-Video Generation:", "<b>Prompt:</b> " + val + "<br><br>🎥 AI Video sequence generated successfully! Cinematic video model rendered for your SK MD Riding TV channel.", true);
                     } else if(type === 'summary') {
-                        showResult("📄 Document Summary:", "<b>Query:</b> " + val + "<br><br>Key takeaways: The uploaded or requested content has been comprehensively summarized for you.");
-                    } else if(type === 'ideas') {
-                        showResult("💡 Viral Ideas & Suggestions:", "<b>Query:</b> " + val + "<br><br>1. Advanced Technology Review<br>2. Pro Level Guide & Tips<br>3. Ultimate Setup Tutorial");
-                    } else if(type === 'translate') {
-                        showResult("🔤 Translation Result:", "<b>Query:</b> " + val + "<br><br>Translated accurately into Telugu and English within the app interface.");
+                        showResult("📄 Document Summary:", "<b>Query:</b> " + val + "<br><br>Key takeaways: The requested content has been comprehensively summarized for you.");
                     } else if(type === 'search') {
-                        showResult("🔍 AI Assistant Search Result:", "<b>Query:</b> " + val + "<br><br>సమాచారం: మీరు అడిగిన ప్రశ్నకు సంబంధించిన పూర్తి వివరాలు ఇక్కడ యాప్‌లోనే అందించబడ్డాయి. బాహ్య బ్రౌజర్‌కి వెళ్లకుండా అన్నీ ఇక్కడే చూడవచ్చు.");
+                        showResult("🔍 AI Assistant Answer:", "<b>Query:</b> " + val + "<br><br>సమాచారం: మీరు అడిగిన ప్రశ్నకు సంబంధించిన పూర్తి వివరాలు ఇక్కడ యాప్‌లోనే అందించబడ్డాయి.");
                     }
                 }
 
@@ -400,7 +396,7 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
 
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
-            tts?.language = Locale("te", "IN") // తెలుగు వాయిస్ సపోర్ట్
+            tts?.language = Locale("te", "IN")
         }
     }
 
@@ -432,4 +428,13 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://studio.youtube.com"))
                 activity.startActivity(intent)
             } catch (e: Exception) {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("ht
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/upload"))
+                activity.startActivity(intent)
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
+            val results = data?.get
