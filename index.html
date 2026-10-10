@@ -35,6 +35,9 @@
         .header-title {
             font-size: 18px;
             font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         .main-container {
             flex: 1;
@@ -45,7 +48,7 @@
             text-align: center;
             padding: 20px;
             position: relative;
-            overflow-y: auto;
+            overflow: hidden;
         }
         .welcome-screen {
             display: flex;
@@ -77,35 +80,73 @@
             text-align: left;
             padding: 10px;
             box-sizing: border-box;
-            gap: 15px;
+            gap: 20px;
             flex-direction: column;
+            margin-bottom: 10px;
+        }
+        .chat-message-wrapper {
+            display: flex;
+            flex-direction: column;
+            max-width: 85%;
+        }
+        .user-wrapper {
+            align-self: flex-end;
+        }
+        .ai-wrapper {
+            align-self: flex-start;
+            width: 100%;
+            max-width: 100%;
         }
         .chat-message {
-            padding: 12px 16px;
-            border-radius: 16px;
-            max-width: 80%;
+            padding: 14px 18px;
+            border-radius: 18px;
             font-size: 15px;
             line-height: 1.5;
+            word-wrap: break-word;
         }
         .user-msg {
             background-color: #2b3b5e;
             color: white;
-            align-self: flex-end;
             border-bottom-right-radius: 4px;
         }
         .ai-msg {
             background-color: #161c2c;
             color: #e2e8f0;
-            align-self: flex-start;
             border-bottom-left-radius: 4px;
             border: 1px solid #2d3748;
         }
+        /* Gemini style action buttons below AI response */
+        .ai-actions-bar {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 8px;
+            padding-left: 4px;
+        }
+        .ai-action-btn {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            transition: color 0.2s;
+        }
+        .ai-action-btn:hover {
+            color: #ffffff;
+        }
+        .ai-actions-bar .audio-btn {
+            margin-left: auto;
+        }
+
         /* Bottom Input Box Container */
         .input-box-wrapper {
             position: relative;
             width: 92%;
             max-width: 650px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             flex-shrink: 0;
         }
         .input-box {
@@ -200,253 +241,5 @@
             font-size: 13px;
         }
         .popup-card-btn:hover {
-            background-color: #2c3a56;
-        }
-        .popup-card-btn span.icon {
-            font-size: 22px;
-        }
-        .popup-list-item {
-            padding: 12px 14px;
-            font-size: 14px;
-            color: #ffffff;
-            cursor: pointer;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 4px;
-        }
-        .popup-list-item:hover {
-            background-color: #222d44;
-        }
-        .popup-list-item .item-icon {
-            font-size: 20px;
-        }
-        .popup-list-item .item-desc {
-            font-size: 12px;
-            color: #94a3b8;
-            display: block;
-        }
-        /* Sidebar */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: -280px;
-            width: 280px;
-            height: 100%;
-            background-color: #121826;
-            transition: 0.3s;
-            z-index: 2000;
-            padding: 20px;
-            box-sizing: border-box;
-            border-right: 1px solid #1f293d;
-        }
-        .sidebar.open {
-            left: 0;
-        }
-        .sidebar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-        .sidebar-menu {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .sidebar-menu li {
-            padding: 12px 0;
-            border-bottom: 1px solid #1f293d;
-            cursor: pointer;
-            font-size: 15px;
-        }
-    </style>
-</head>
-<body>
-
-    <header>
-        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-        <div class="header-title">Ai Sameer</div>
-        <button class="top-icon-btn" onclick="location.reload()">✏️</button>
-    </header>
-
-    <div id="sidebar" class="sidebar">
-        .sidebar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-        <div class="sidebar-header">
-            <h3>Ai Sameer</h3>
-            <button class="menu-btn" onclick="toggleSidebar()">✕</button>
-        </div>
-        <ul class="sidebar-menu">
-            <li onclick="alert('New chat started')">➕ New chat</li>
-            <li onclick="alert('Opening Images')">🖼️ Images</li>
-            <li onclick="alert('Library opened')">📁 Library</li>
-            <li onclick="alert('New notebook opened')">📓 New notebook</li>
-        </ul>
-    </div>
-
-    <div class="main-container" id="mainContainer">
-        <div class="welcome-screen" id="welcomeScreen">
-            <div class="gemini-sparkle">✦</div>
-            <div class="center-title">Ai Sameer</div>
-        </div>
-
-        <div class="chat-history" id="chatHistory"></div>
-
-        <div class="input-box-wrapper">
-            <div id="plusPopup" class="plus-popup">
-                <div class="popup-top-grid">
-                    <button class="popup-card-btn" onclick="selectOption('Photos')">
-                        <span class="icon">🖼️</span>
-                        <span>Photos</span>
-                    </button>
-                    <button class="popup-card-btn" onclick="selectOption('Camera')">
-                        <span class="icon">📷</span>
-                        <span>Camera</span>
-                    </button>
-                    <button class="popup-card-btn" onclick="selectOption('Avatar')">
-                        <span class="icon">😊</span>
-                        <span>Avatar</span>
-                    </button>
-                </div>
-
-                <div class="popup-list-item" onclick="selectOption('Images')">
-                    <span class="item-icon">🎨</span>
-                    <div>
-                        <strong>Images</strong>
-                        <span class="item-desc">Create and edit images</span>
-                    </div>
-                </div>
-                <div class="popup-list-item" onclick="selectOption('Music')">
-                    <span class="item-icon">🎵</span>
-                    <div>
-                        <strong>Music</strong>
-                        <span class="item-desc">Make audio tracks</span>
-                    </div>
-                </div>
-                <div class="popup-list-item" onclick="selectOption('Canvas')">
-                    <span class="item-icon">📄</span>
-                    <div>
-                        <strong>Canvas</strong>
-                        <span class="item-desc">Code, write or make slides</span>
-                    </div>
-                </div>
-                <div class="popup-list-item" onclick="selectOption('Deep Research')">
-                    <span class="item-icon">🌐</span>
-                    <div>
-                        <strong>Deep Research</strong>
-                        <span class="item-desc">Get detailed reports</span>
-                    </div>
-                </div>
-                <div class="popup-list-item" onclick="selectOption('Guided Learning')">
-                    <span class="item-icon">📖</span>
-                    <div>
-                        <strong>Guided Learning</strong>
-                        <span class="item-desc">Get step-by-step help</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="input-box">
-                <button class="plus-btn" onclick="togglePlusMenu(event)">＋</button>
-                <input type="text" id="userInput" placeholder="Ask Ai Sameer" onkeypress="handleKeyPress(event)">
-                <div class="action-btns">
-                    <button class="mic-btn" onclick="startVoiceRecognition()" title="Voice Input">🎤</button>
-                    <button class="send-btn" onclick="sendMessage()">➤</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-        }
-
-        function togglePlusMenu(event) {
-            event.stopPropagation();
-            const popup = document.getElementById('plusPopup');
-            popup.classList.toggle('active');
-        }
-
-        function selectOption(optionName) {
-            document.getElementById('userInput').value = optionName + ": ";
-            document.getElementById('plusPopup').classList.remove('active');
-        }
-
-        window.addEventListener('click', function(event) {
-            const popup = document.getElementById('plusPopup');
-            if (popup && !event.target.closest('.input-box-wrapper')) {
-                popup.classList.remove('active');
-            }
-        });
-
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
-        }
-
-        function sendMessage() {
-            const input = document.getElementById('userInput');
-            const text = input.value.trim();
-            if (text === "") return;
-
-            // Hide welcome screen and show chat history
-            document.getElementById('welcomeScreen').style.display = 'none';
-            const history = document.getElementById('chatHistory');
-            history.style.display = 'flex';
-
-            // Add User Message
-            const userMsg = document.createElement('div');
-            userMsg.className = 'chat-message user-msg';
-            userMsg.innerText = text;
-            history.appendChild(userMsg);
-
-            input.value = "";
-            history.scrollTop = history.scrollHeight;
-
-            // Simulate AI Response after 1 second
-            setTimeout(() => {
-                const aiMsg = document.createElement('div');
-                aiMsg.className = 'chat-message ai-msg';
-                aiMsg.innerText = "నేను Ai Sameer ని. మీరు అడిగిన దానికి తగిన సమాచారాన్ని అందిస్తున్నాను: " + text;
-                history.appendChild(aiMsg);
-                history.scrollTop = history.scrollHeight;
-            }, 1000);
-        }
-
-        function startVoiceRecognition() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                alert("ఈ బ్రౌజర్ వాయిస్ రికగ్నిషన్‌ని సపోర్ట్ చేయదు.");
-                return;
-            }
+            background
             
-            try {
-                const recognition = new SpeechRecognition();
-                recognition.lang = 'te-IN';
-                recognition.interimResults = false;
-                
-                recognition.onresult = function(event) {
-                    document.getElementById('userInput').value = event.results[0][0].transcript;
-                };
-                
-                recognition.onerror = function(event) {
-                    alert("మైక్ పర్మిషన్ లేదా నెట్‌వర్క్ సమస్య ఉంది.");
-                };
-                
-                recognition.start();
-            } catch (e) {
-                alert("మైక్ రన్ చేయడం కుదరలేదు.");
-            }
-        }
-    </script>
-
-</body>
-</html>
