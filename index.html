@@ -45,6 +45,14 @@
             text-align: center;
             padding: 20px;
             position: relative;
+            overflow-y: auto;
+        }
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: auto;
         }
         .gemini-sparkle {
             font-size: 40px;
@@ -57,14 +65,48 @@
             font-size: 28px;
             font-weight: 400;
             color: #ffffff;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
         }
-        /* Bottom Input Box Container properly visible */
+        /* Chat History Area */
+        .chat-history {
+            display: none;
+            width: 100%;
+            max-width: 650px;
+            flex: 1;
+            overflow-y: auto;
+            text-align: left;
+            padding: 10px;
+            box-sizing: border-box;
+            gap: 15px;
+            flex-direction: column;
+        }
+        .chat-message {
+            padding: 12px 16px;
+            border-radius: 16px;
+            max-width: 80%;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        .user-msg {
+            background-color: #2b3b5e;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        .ai-msg {
+            background-color: #161c2c;
+            color: #e2e8f0;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            border: 1px solid #2d3748;
+        }
+        /* Bottom Input Box Container */
         .input-box-wrapper {
             position: relative;
             width: 92%;
             max-width: 650px;
             margin-bottom: 20px;
+            flex-shrink: 0;
         }
         .input-box {
             display: flex;
@@ -230,6 +272,12 @@
     </header>
 
     <div id="sidebar" class="sidebar">
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
         <div class="sidebar-header">
             <h3>Ai Sameer</h3>
             <button class="menu-btn" onclick="toggleSidebar()">✕</button>
@@ -242,11 +290,13 @@
         </ul>
     </div>
 
-    <div class="main-container">
-        <div>
+    <div class="main-container" id="mainContainer">
+        <div class="welcome-screen" id="welcomeScreen">
             <div class="gemini-sparkle">✦</div>
             <div class="center-title">Ai Sameer</div>
         </div>
+
+        <div class="chat-history" id="chatHistory"></div>
 
         <div class="input-box-wrapper">
             <div id="plusPopup" class="plus-popup">
@@ -304,7 +354,7 @@
 
             <div class="input-box">
                 <button class="plus-btn" onclick="togglePlusMenu(event)">＋</button>
-                <input type="text" id="userInput" placeholder="Ask Ai Sameer">
+                <input type="text" id="userInput" placeholder="Ask Ai Sameer" onkeypress="handleKeyPress(event)">
                 <div class="action-btns">
                     <button class="mic-btn" onclick="startVoiceRecognition()" title="Voice Input">🎤</button>
                     <button class="send-btn" onclick="sendMessage()">➤</button>
@@ -336,6 +386,41 @@
             }
         });
 
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('userInput');
+            const text = input.value.trim();
+            if (text === "") return;
+
+            // Hide welcome screen and show chat history
+            document.getElementById('welcomeScreen').style.display = 'none';
+            const history = document.getElementById('chatHistory');
+            history.style.display = 'flex';
+
+            // Add User Message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'chat-message user-msg';
+            userMsg.innerText = text;
+            history.appendChild(userMsg);
+
+            input.value = "";
+            history.scrollTop = history.scrollHeight;
+
+            // Simulate AI Response after 1 second
+            setTimeout(() => {
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'chat-message ai-msg';
+                aiMsg.innerText = "నేను Ai Sameer ని. మీరు అడిగిన దానికి తగిన సమాచారాన్ని అందిస్తున్నాను: " + text;
+                history.appendChild(aiMsg);
+                history.scrollTop = history.scrollHeight;
+            }, 1000);
+        }
+
         function startVoiceRecognition() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
@@ -359,14 +444,6 @@
                 recognition.start();
             } catch (e) {
                 alert("మైక్ రన్ చేయడం కుదరలేదు.");
-            }
-        }
-
-        function sendMessage() {
-            const text = document.getElementById('userInput').value;
-            if (text.trim() !== "") {
-                alert("సందేశం పంపబడింది: " + text);
-                document.getElementById('userInput').value = "";
             }
         }
     </script>
