@@ -79,47 +79,304 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <style>
                 * { box-sizing: border-box; margin: 0; padding: 0; }
-                body { background: #050B18; color: #FFF; font-family: sans-serif; padding: 16px; padding-bottom: 120px; }
-                .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-                .title { font-size: 18px; font-weight: bold; color: #38BDF8; }
-                .btn { background: #111833; border: 1px solid #1E2D4A; color: #FFF; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; }
-                .chat-box { background: #111833; border: 1px solid #1E2938; padding: 14px; border-radius: 12px; margin-bottom: 12px; font-size: 13px; line-height: 1.5; }
-                .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-                .grid-btn { background: #111833; border: 1px solid #1E2D4A; padding: 12px; border-radius: 12px; font-size: 12px; color: #E2E8F0; text-align: center; cursor: pointer; }
-                .input-bar { position: fixed; bottom: 20px; left: 16px; right: 16px; background: #0F172A; border: 1px solid #1E2938; border-radius: 25px; padding: 8px 14px; display: flex; align-items: center; gap: 10px; }
-                .input-bar input { background: transparent; border: none; color: #FFF; width: 100%; outline: none; font-size: 13px; }
-                .send-btn { background: #00C6FF; color: #000; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; cursor: pointer; flex-shrink: 0; }
+                body {
+                    background: #090E17;
+                    color: #FFFFFF;
+                    font-family: sans-serif;
+                    padding: 16px;
+                    padding-bottom: 120px;
+                }
+                .header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 20px;
+                }
+                .header-left {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                }
+                .menu-icon { font-size: 22px; cursor: pointer; color: #94A3B8; font-weight: bold; }
+                .app-title { font-size: 18px; font-weight: 600; color: #E2E8F0; }
+                
+                .header-actions { display: flex; gap: 12px; align-items: center; }
+                .icon-btn {
+                    color: #94A3B8;
+                    font-size: 18px;
+                    cursor: pointer;
+                    background: transparent;
+                    border: none;
+                }
+                
+                /* సైడ్ హిస్టరీ డ్రాయర్ */
+                .sidebar {
+                    position: fixed;
+                    top: 0;
+                    left: -300px;
+                    width: 300px;
+                    height: 100%;
+                    background: #0B132B;
+                    border-right: 1px solid #1E2938;
+                    z-index: 1000;
+                    transition: 0.3s ease;
+                    padding: 20px;
+                    overflow-y: auto;
+                    box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+                }
+                .sidebar.open { left: 0; }
+                .sidebar-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 20px;
+                    font-size: 16px;
+                    font-weight: bold;
+                    color: #38BDF8;
+                }
+                .close-sidebar { font-size: 18px; cursor: pointer; color: #94A3B8; }
+                .history-item {
+                    background: #111833;
+                    border: 1px solid #1E2D4A;
+                    padding: 10px;
+                    border-radius: 10px;
+                    margin-bottom: 8px;
+                    font-size: 12px;
+                    color: #CBD5E1;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                .history-text { cursor: pointer; flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 8px; }
+                .delete-btn {
+                    background: rgba(239, 68, 68, 0.2);
+                    color: #EF4444;
+                    border: none;
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 11px;
+                }
+
+                .hero-card {
+                    text-align: center;
+                    margin: 40px 0 30px 0;
+                }
+                .greeting-title { font-size: 24px; font-weight: 700; background: linear-gradient(90deg, #4285F4, #9B72CB, #D96570); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px; }
+                
+                /* ప్లస్ బటన్ పాపప్ మోడల్ */
+                .modal {
+                    position: fixed;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    background: #111827;
+                    border-top: 1px solid #1F2937;
+                    border-radius: 24px 24px 0 0;
+                    padding: 20px;
+                    z-index: 2000;
+                    display: none;
+                }
+                .modal.open { display: block; }
+                .modal-grid {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 12px;
+                    margin-bottom: 16px;
+                }
+                .modal-card {
+                    background: #1F2937;
+                    border: 1px solid #374151;
+                    border-radius: 16px;
+                    padding: 16px 10px;
+                    text-align: center;
+                    cursor: pointer;
+                    font-size: 12px;
+                    color: #E5E7EB;
+                }
+                .modal-card div:first-child { font-size: 20px; margin-bottom: 6px; }
+                .modal-item {
+                    padding: 12px 0;
+                    border-bottom: 1px solid #1F2937;
+                    font-size: 13px;
+                    cursor: pointer;
+                    color: #E5E7EB;
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                }
+
+                .chat-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 100px; }
+                .chat-bubble-user {
+                    background: #1E3A8A;
+                    color: #E2E8F0;
+                    padding: 12px 16px;
+                    border-radius: 16px 16px 4px 16px;
+                    max-width: 85%;
+                    align-self: flex-end;
+                    font-size: 13px;
+                    line-height: 1.5;
+                }
+                .chat-bubble-ai {
+                    background: #111833;
+                    border: 1px solid #1E2938;
+                    color: #CBD5E1;
+                    padding: 14px 16px;
+                    border-radius: 16px 16px 16px 4px;
+                    max-width: 90%;
+                    align-self: flex-start;
+                    font-size: 13px;
+                    line-height: 1.6;
+                }
+                .tts-speaker-btn {
+                    background: rgba(0, 198, 255, 0.2);
+                    color: #00C6FF;
+                    border: 1px solid #00C6FF;
+                    padding: 6px 12px;
+                    border-radius: 8px;
+                    font-size: 12px;
+                    font-weight: bold;
+                    cursor: pointer;
+                    margin-top: 8px;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                }
+                .sub-box {
+                    background: linear-gradient(135deg, #1E1B4B 0%, #312E81 100%);
+                    border: 1px solid #6366F1;
+                    padding: 14px;
+                    border-radius: 14px;
+                    text-align: center;
+                    margin-top: 10px;
+                }
+                .upgrade-btn {
+                    background: linear-gradient(135deg, #6366F1, #EC4899);
+                    color: white;
+                    border: none;
+                    padding: 8px 16px;
+                    border-radius: 16px;
+                    font-weight: bold;
+                    font-size: 11px;
+                    cursor: pointer;
+                    margin-top: 8px;
+                }
+
+                .input-bar {
+                    position: fixed;
+                    bottom: 20px;
+                    left: 16px;
+                    right: 16px;
+                    background: #111827;
+                    border: 1px solid #374151;
+                    border-radius: 30px;
+                    padding: 8px 14px;
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                }
+                .input-bar input { background: transparent; border: none; color: #FFF; width: 100%; outline: none; font-size: 14px; }
+                .plus-btn { font-size: 22px; color: #94A3B8; cursor: pointer; font-weight: bold; background: none; border: none; }
+                .mic-btn { font-size: 18px; color: #94A3B8; cursor: pointer; background: none; border: none; }
+                .send-circle {
+                    width: 36px;
+                    height: 36px;
+                    background: #3B82F6;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    cursor: pointer;
+                    flex-shrink: 0;
+                }
             </style>
         </head>
         <body>
-            <div class="header">
-                <div class="title">AI Sameer</div>
-                <button class="btn" onclick="clearChat()">New Chat</button>
-            </div>
-
-            <div id="chatArea">
-                <div class="chat-box">
-                    <b>Hello! I am AI Sameer.</b><br>How can I help you today? Ask anything or use voice input.
+            <div class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <span>💬 Chat History</span>
+                    <span class="close-sidebar" onclick="toggleSidebar()">✕</span>
+                </div>
+                <div id="historyList">
+                    <div style="font-size: 12px; color: #64748B;">No recent chats</div>
                 </div>
             </div>
 
-            <div class="grid">
-                <div class="grid-btn" onclick="runAction('YouTube Script')">▶ YouTube Script</div>
-                <div class="grid-btn" onclick="runAction('Create Image')">🖼 Create Image</div>
-                <div class="grid-btn" onclick="runAction('Text to Video')">🎥 Text to Video</div>
-                <div class="grid-btn" onclick="runAction('Summarize')">📄 Summarize</div>
+            <!-- ప్లస్ బటన్ పాపప్ మోడల్ -->
+            <div class="modal" id="actionModal">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                    <b style="font-size: 14px; color: #E5E7EB;">Add to chat</b>
+                    <span onclick="toggleModal()" style="cursor: pointer; color: #94A3B8; font-size: 16px;">✕</span>
+                </div>
+                <div class="modal-grid">
+                    <div class="modal-card" onclick="runAIAction('photos')">
+                        <div>🖼️</div>
+                        <div>Photos</div>
+                    </div>
+                    <div class="modal-card" onclick="runAIAction('camera')">
+                        <div>📷</div>
+                        <div>Camera</div>
+                    </div>
+                    <div class="modal-card" onclick="runAIAction('avatar')">
+                        <div>✨</div>
+                        <div>Avatar</div>
+                    </div>
+                </div>
+                <div class="modal-item" onclick="runAIAction('image')">🖼️ <div><b>Create an Image</b><br><span style="font-size: 11px; color: #94A3B8;">Generate custom visuals</span></div></div>
+                <div class="modal-item" onclick="runAIAction('txt2vid')">🎥 <div><b>Text to Video</b><br><span style="font-size: 11px; color: #94A3B8;">4 daily free limit</span></div></div>
+                <div class="modal-item" onclick="runAIAction('youtube')">▶ <div><b>YouTube Script</b><br><span style="font-size: 11px; color: #94A3B8;">Concept to script</span></div></div>
+                <div class="modal-item" onclick="runAIAction('summary')">📄 <div><b>Summarize Document</b><br><span style="font-size: 11px; color: #94A3B8;">Key insights</span></div></div>
+                <div class="modal-item" onclick="runAIAction('music')">🎵 <div><b>Music</b><br><span style="font-size: 11px; color: #94A3B8;">Make audio tracks</span></div></div>
+                <div class="modal-item" onclick="runAIAction('canvas')">📝 <div><b>Canvas</b><br><span style="font-size: 11px; color: #94A3B8;">Code, write or slides</span></div></div>
+                <div class="modal-item" onclick="runAIAction('research')">🔍 <div><b>Deep Research</b><br><span style="font-size: 11px; color: #94A3B8;">Get detailed reports</span></div></div>
             </div>
 
+            <div class="header">
+                <div class="header-left">
+                    <div class="menu-icon" onclick="toggleSidebar()" title="Menu">≡</div>
+                    <div class="app-title">AI Sameer</div>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" onclick="clearAll()" title="New Chat">✏️</button>
+                </div>
+            </div>
+
+            <div class="hero-card" id="heroCard">
+                <div class="greeting-title">Hello, Sameer</div>
+            </div>
+
+            <div class="chat-container" id="chatContainer"></div>
+
+            <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFileSelect(event)">
+
             <div class="input-bar">
+                <button class="plus-btn" onclick="toggleModal()" title="Add Options">＋</button>
                 <input type="text" id="userInput" placeholder="Ask AI Sameer...">
-                <button class="btn" onclick="AndroidApp.startVoiceInput()">Mic</button>
-                <button class="send-btn" onclick="sendQuery()">➔</button>
+                <button class="mic-btn" onclick="AndroidApp.startVoiceInput()" title="Speak">🎙️</button>
+                <div class="send-circle" onclick="sendQuery()">➔</div>
             </div>
 
             <script>
-                function clearChat() {
+                var chatHistoryList = [];
+                var dailyVideoCount = 0;
+
+                function toggleSidebar() {
+                    document.getElementById('sidebar').classList.toggle('open');
+                }
+
+                function toggleModal() {
+                    document.getElementById('actionModal').classList.toggle('open');
+                }
+
+                function clearAll() {
                     document.getElementById('userInput').value = '';
-                    document.getElementById('chatArea').innerHTML = '<div class="chat-box"><b>New Chat Started.</b></div>';
+                    document.getElementById('chatContainer').innerHTML = '';
+                    document.getElementById('heroCard').style.display = 'block';
                 }
 
                 function setVoiceResult(text) {
@@ -127,74 +384,70 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                     sendQuery();
                 }
 
-                function runAction(actionType) {
-                    var area = document.getElementById('chatArea');
-                    area.innerHTML += '<div class="chat-box"><b>Feature:</b> ' + actionType + ' activated successfully. Ready for processing!</div>';
-                    AndroidApp.speakText(actionType + " activated");
+                function handleFileSelect(event) {
+                    var file = event.target.files[0];
+                    if (file) {
+                        appendChat("Photo: " + file.name, "ఈ ఫోటో మీ ప్రాజెక్ట్ కోసం విజయవంతంగా లోడ్ చేయబడింది.");
+                        document.getElementById('userInput').value = '';
+                    }
                 }
 
-                function sendQuery() {
-                    var val = document.getElementById('userInput').value.trim();
-                    if(!val) return;
-                    document.getElementById('userInput').value = '';
+                function updateHistoryUI() {
+                    var listDiv = document.getElementById('historyList');
+                    if (chatHistoryList.length === 0) {
+                        listDiv.innerHTML = "<div style='font-size: 12px; color: #64748B;'>No recent chats</div>";
+                        return;
+                    }
+                    var html = "";
+                    for(var i=0; i<chatHistoryList.length; i++) {
+                        html += "<div class='history-item'>";
+                        html += "<span class='history-text' onclick='loadHistoryItem(\"" + chatHistoryList[i] + "\")'>💬 " + chatHistoryList[i] + "</span>";
+                        html += "<button class='delete-btn' onclick='deleteHistoryItem(" + i + ")' title='Delete'>✕</button>";
+                        html += "</div>";
+                    }
+                    listDiv.innerHTML = html;
+                }
+
+                function addHistory(query) {
+                    chatHistoryList.unshift(query);
+                    updateHistoryUI();
+                }
+
+                function deleteHistoryItem(index) {
+                    chatHistoryList.splice(index, 1);
+                    updateHistoryUI();
+                }
+
+                function loadHistoryItem(query) {
+                    toggleSidebar();
+                    document.getElementById('userInput').value = query;
+                    sendQuery();
+                }
+
+                function appendChat(userText, aiResponse, isLimit) {
+                    document.getElementById('heroCard').style.display = 'none';
+                    document.getElementById('actionModal').classList.remove('open');
                     
-                    var area = document.getElementById('chatArea');
-                    area.innerHTML += '<div class="chat-box"><b>You:</b> ' + val + '</div>';
-                    area.innerHTML += '<div class="chat-box"><b>AI Sameer:</b> మీరు అడిగిన ప్రశ్న "' + val + '" కి తక్షణ సమాధానం ఇక్కడ అందించబడింది.</div>';
+                    addHistory(userText);
+
+                    var container = document.getElementById('chatContainer');
                     
-                    AndroidApp.speakText("AI Sameer answered");
-                }
-            </script>
-        </body>
-        </html>
-        """.trimIndent()
-
-        webView.loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null)
-        setContentView(webView)
-    }
-
-    override fun onInit(status: Int) {
-        if (status == TextToSpeech.SUCCESS) {
-            tts?.language = Locale("te", "IN")
-        }
-    }
-
-    class WebAppInterface(private val activity: MainActivity) {
-        @JavascriptInterface
-        fun startVoiceInput() {
-            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-                putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-                putExtra(RecognizerIntent.EXTRA_LANGUAGE, "te-IN")
-            }
-            try {
-                activity.startActivityForResult(intent, activity.SPEECH_REQUEST_CODE)
-            } catch (e: Exception) {
-                Toast.makeText(activity, "Not supported", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        @JavascriptInterface
-        fun speakText(text: String) {
-            activity.tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
-            val results = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
-            val spokenText = results?.get(0) ?: ""
-            if (spokenText.isNotEmpty()) {
-                webViewInstance?.post {
-                    webViewInstance?.evaluateJavascript("setVoiceResult('$spokenText');", null)
-                }
-            }
-        }
-    }
-
-    override fun onDestroy() {
-        tts?.stop()
-        tts?.shutdown()
-        super.onDestroy()
-    }
-}
+                    var userBubble = document.createElement('div');
+                    userBubble.className = 'chat-bubble-user';
+                    userBubble.innerText = userText;
+                    container.appendChild(userBubble);
+                    
+                    var aiBubble = document.createElement('div');
+                    aiBubble.className = 'chat-bubble-ai';
+                    
+                    aiBubble.innerHTML = "<b>AI Sameer:</b><br><br>" + aiResponse;
+                    
+                    if(isLimit) {
+                        aiBubble.innerHTML += "<div class='sub-box'><b>🔒 Limit Reached (4/4 Videos)</b><br>ఉచిత రోజువారీ లిమిట్ ముగిసింది. అన్‌లిమిటెడ్ వీడియోల కోసం ప్రో సబ్‌స్క్రిప్షన్ తీసుకోండి!<br><button class='upgrade-btn' onclick='alert(\"Upgrade to Pro for ₹199/month\")'>🚀 Upgrade to Pro</button></div>";
+                    } else {
+                        aiBubble.innerHTML += "<br><button class='tts-speaker-btn' onclick='AndroidApp.speakText(\"AI Sameer answered\")'>🔊 Listen</button>";
+                        AndroidApp.speakText(aiResponse);
+                    }
+                    
+                    container.appendChild(aiBubble);
+               
