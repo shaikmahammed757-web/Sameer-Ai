@@ -2,46 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ai Sameer - Your Personal AI Assistant</title>
-    
-    <!-- PWA Manifest -->
     <link rel="manifest" href="./manifest.json">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23ec4899' d='M12 1L9 9l-8 3 8 3 3 8 3-8 8-3-8-3-3-8zm0 4.2L13.7 9l4.8 1.8-4.8 1.8L12 19.8l-1.7-5.2-4.8-1.8 4.8-1.8L12 5.2z'/%3E%3C/svg%3E">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23ec4899' d='M12 1L9 9l-8 3 8 3 3 8 3-8 8-3-8-3-3-8zm0 4.2L13.7 9l4.8 1.8-4.8 1.8L12 19.8l-1.7-5.2-4.8-1.8 4.8-1.8L12 5.2z'/%3E%3C/svg%3E">
-    
     <meta name="theme-color" content="#0b0f19">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        html, body { width: 100%; height: 100%; background-color: #0b0f19; color: #ffffff; display: flex; flex-direction: column; overflow: hidden; }
         
-        html, body {
-            width: 100%;
-            height: 100vh;
-            height: 100dvh;
-            background-color: #0b0f19;
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        
-        /* App Header */
-        header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 12px 16px; 
-            background: #0b0f19; 
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08); 
-            z-index: 50; 
-            flex-shrink: 0;
-        }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #0b0f19; border-bottom: 1px solid rgba(255, 255, 255, 0.08); z-index: 50; flex-shrink: 0; }
         .header-left { display: flex; align-items: center; gap: 12px; }
         .menu-icon { font-size: 22px; cursor: pointer; color: #fff; padding: 4px; }
         .model-selector { display: flex; align-items: center; gap: 6px; font-size: 16px; font-weight: 600; color: #fff; cursor: pointer; }
         .header-right { font-size: 22px; cursor: pointer; color: #fff; padding: 4px; }
 
-        /* Side Navigation Drawer */
         .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; z-index: 200; }
         .side-drawer { position: fixed; top: 0; left: -300px; width: 280px; height: 100%; background: #111827; z-index: 210; display: flex; flex-direction: column; transition: left 0.3s ease; box-shadow: 4px 0 15px rgba(0,0,0,0.5); }
         .side-drawer.open { left: 0; }
@@ -50,112 +24,47 @@
         .drawer-close { font-size: 22px; cursor: pointer; color: #94a3b8; }
         
         .drawer-content { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 4px; }
-        .drawer-item { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 12px; cursor: pointer; color: #e2e8f0; font-size: 14px; transition: background 0.2s; }
+        .drawer-item { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 12px; cursor: pointer; color: #e2e8f0; font-size: 14px; }
         .drawer-item:hover { background: rgba(255,255,255,0.05); }
-        .drawer-item span { font-size: 18px; }
         
-        .drawer-section-title { font-size: 12px; color: #94a3b8; padding: 12px 14px 4px 14px; text-transform: uppercase; letter-spacing: 0.5px; }
-        
-        .drawer-footer { padding: 12px 16px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; }
-        .user-profile { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; color: #fff; }
-        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: #3b82f6; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-        .settings-icon { font-size: 18px; cursor: pointer; color: #94a3b8; }
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+        .welcome-screen { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; gap: 16px; background-color: #0b0f19; overflow-y: auto; }
+        .sparkle-logo { font-size: 40px; color: #ec4899; }
+        .welcome-screen h2 { font-size: 24px; font-weight: 500; color: #f8fafc; }
 
-        /* Main Content Area */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* Welcome Center Screen */
-        .welcome-screen { 
-            flex: 1;
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            text-align: center; 
-            padding: 20px; 
-            gap: 16px; 
-            background-color: #0b0f19;
-            overflow-y: auto;
-        }
-        .sparkle-logo { font-size: 40px; background: linear-gradient(135deg, #3b82f6, #ec4899, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .welcome-screen h2 { font-size: 26px; font-weight: 500; color: #f8fafc; }
-
-        /* Chat Container */
-        .chat-container { 
-            flex: 1;
-            overflow-y: auto; 
-            padding: 16px; 
-            display: none; 
-            flex-direction: column; 
-            gap: 16px; 
-            background-color: #0b0f19;
-        }
+        .chat-container { flex: 1; overflow-y: auto; padding: 16px; display: none; flex-direction: column; gap: 16px; background-color: #0b0f19; }
         .message-wrapper { display: flex; flex-direction: column; gap: 6px; max-width: 85%; }
         .user-wrapper { align-self: flex-end; }
         .ai-wrapper { align-self: flex-start; width: 100%; }
+        .message { padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.5; }
+        .ai-msg { background: #1e293b; color: #fff; }
+        .user-msg { background: #3b82f6; color: #fff; }
 
-        .message { padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.5; word-break: break-word; }
-        .ai-msg { background: #1e293b; color: #fff; border-bottom-left-radius: 4px; }
-        .user-msg { background: #3b82f6; color: #fff; border-bottom-right-radius: 4px; }
-
-        /* AI Message Action Toolbar */
-        .ai-actions { display: flex; align-items: center; gap: 16px; padding: 4px 8px; color: #94a3b8; font-size: 16px; }
-        .ai-actions span { cursor: pointer; transition: color 0.2s; }
-        .ai-actions span:hover { color: #fff; }
-        .disclaimer { font-size: 11px; color: #64748b; padding-left: 8px; margin-top: 2px; }
-
-        /* Input Bar */
-        .input-bar-wrapper { 
-            padding: 12px 16px; 
-            background: #0b0f19; 
-            flex-shrink: 0; 
-            width: 100%; 
-            z-index: 40;
-        }
+        .input-bar-wrapper { padding: 12px 16px 20px 16px; background: #0b0f19; flex-shrink: 0; width: 100%; z-index: 40; }
         .input-bar { display: flex; align-items: center; background: #161f30; border-radius: 28px; padding: 8px 12px; border: 1px solid rgba(255, 255, 255, 0.08); gap: 8px; }
-        .plus-btn { background: none; border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; font-size: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .plus-btn { background: none; border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .text-input { flex: 1; background: none; border: none; padding: 8px; color: #fff; font-size: 15px; outline: none; }
-        .mic-btn { background: none; border: none; color: #cbd5e1; font-size: 18px; cursor: pointer; padding: 0 4px; display: flex; align-items: center; justify-content: center; }
+        .mic-btn { background: none; border: none; color: #cbd5e1; font-size: 18px; cursor: pointer; padding: 0 4px; }
         .wave-btn { background: #3b82f6; color: #fff; border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; }
 
-        /* Advanced Tools Popup Menu */
         .menu-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; z-index: 100; align-items: flex-end; }
-        .menu-sheet { width: 100%; background: #161f30; border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 20px; max-height: 75vh; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; animation: slideUp 0.3s ease-out; }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        
-        .sheet-header { width: 40px; height: 4px; background: #475569; border-radius: 2px; align-self: center; margin-bottom: 5px; }
+        .menu-sheet { width: 100%; background: #161f30; border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
         .tools-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; text-align: center; }
-        .tool-item { background: #1e293b; padding: 14px 10px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); }
-        .tool-item span { font-size: 12px; color: #cbd5e1; }
-        .tool-icon { font-size: 20px; }
-
-        .list-options { display: flex; flex-direction: column; gap: 8px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px; }
-        .list-row { display: flex; align-items: center; gap: 14px; padding: 10px 12px; border-radius: 12px; background: #1e293b; cursor: pointer; }
-        .list-row div h4 { font-size: 14px; color: #fff; }
-        .list-row div p { font-size: 11px; color: #94a3b8; }
+        .tool-item { background: #1e293b; padding: 14px 10px; border-radius: 16px; color: #cbd5e1; font-size: 12px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
     <header>
         <div class="header-left">
             <span class="menu-icon" id="menuToggleBtn">☰</span>
             <div class="model-selector">
                 <span>Ai Sameer Pro</span>
-                <span style="font-size: 12px; color: #94a3b8;">▼</span>
             </div>
         </div>
-        <div class="header-right" id="newChatBtn" title="New Chat">✏️</div>
+        <div class="header-right" id="newChatBtn">✏️</div>
     </header>
 
-    <!-- Side Navigation Drawer -->
     <div class="drawer-overlay" id="drawerOverlay"></div>
     <div class="side-drawer" id="sideDrawer">
         <div class="drawer-header">
@@ -163,135 +72,40 @@
             <span class="drawer-close" id="drawerCloseBtn">✕</span>
         </div>
         <div class="drawer-content">
-            <div class="drawer-item" onclick="startNewChat()">
-                <span>✏️</span> New chat
-            </div>
-            <div class="drawer-item" onclick="selectDrawerItem('Search chats')">
-                <span>🔍</span> Search chats
-            </div>
-            <div class="drawer-item" onclick="selectDrawerItem('Images')">
-                <span>🖼️</span> Images
-            </div>
-            <div class="drawer-item" onclick="selectDrawerItem('Library')">
-                <span>📁</span> Library
-            </div>
-            
-            <div class="drawer-section-title">Notebooks</div>
-            <div class="drawer-item" onclick="selectDrawerItem('New notebook')">
-                <span>➕</span> New notebook
-            </div>
-
-            <div class="drawer-section-title">Recent</div>
-            <div class="drawer-item" onclick="selectDrawerItem('Voice Input Fix')">
-                <span>💬</span> యాప్ వాయిస్ ఇన్పుట్ సమస్య పరిష్కారం
-            </div>
-            <div class="drawer-item" onclick="selectDrawerItem('AI Pipeline Review')">
-                <span>💬</span> యాప్ డెవలప్‌మెంట్ సహాయం
-            </div>
-        </div>
-        <div class="drawer-footer">
-            <div class="user-profile">
-                <div class="user-avatar">S</div>
-                <span>Shaik Mahammad</span>
-            </div>
-            <span class="settings-icon">⚙️</span>
+            <div class="drawer-item" onclick="startNewChat()"><span>✏️</span> New chat</div>
+            <div class="drawer-item" onclick="selectDrawerItem('Images')"><span>🖼️</span> Images</div>
+            <div class="drawer-item" onclick="selectDrawerItem('Library')"><span>📁</span> Library</div>
         </div>
     </div>
 
-    <!-- Main Content Area -->
     <div class="main-content">
-        <!-- Welcome Center Screen -->
         <div class="welcome-screen" id="welcomeScreen">
             <div class="sparkle-logo">✨</div>
             <h2>Where should we start?</h2>
         </div>
-
-        <!-- Chat Container -->
         <div class="chat-container" id="chatContainer"></div>
     </div>
 
-    <!-- Bottom Input Bar -->
     <div class="input-bar-wrapper">
         <div class="input-bar">
             <button class="plus-btn" id="plusBtn">+</button>
             <input type="text" class="text-input" id="userInput" placeholder="Ask Ai Sameer...">
-            <button class="mic-btn" id="micBtn" title="Voice Input">🎙️</button>
-            <button class="wave-btn" id="waveBtn" title="Audio Wave">📊</button>
+            <button class="mic-btn" id="micBtn">🎙️</button>
+            <button class="wave-btn" id="waveBtn">📊</button>
         </div>
     </div>
 
-    <!-- Advanced Tools Popup Menu -->
     <div class="menu-overlay" id="menuOverlay">
         <div class="menu-sheet">
-            <div class="sheet-header"></div>
-            
-            <!-- Top Grid Tools -->
             <div class="tools-grid">
-                <div class="tool-item" onclick="selectTool('Photos')">
-                    <div class="tool-icon">🖼️</div>
-                    <span>Photos</span>
-                </div>
-                <div class="tool-item" onclick="selectTool('Camera')">
-                    <div class="tool-icon">📷</div>
-                    <span>Camera</span>
-                </div>
-                <div class="tool-item" onclick="selectTool('Avatar')">
-                    <div class="tool-icon">😊</div>
-                    <span>Avatar</span>
-                </div>
-            </div>
-
-            <!-- Detailed List Features -->
-            <div class="list-options">
-                <div class="list-row" onclick="selectTool('Images')">
-                    <span>🌙</span>
-                    <div>
-                        <h4>Images</h4>
-                        <p>Create and edit images</p>
-                    </div>
-                </div>
-                <div class="list-row" onclick="selectTool('Music')">
-                    <span>🎵</span>
-                    <div>
-                        <h4>Music</h4>
-                        <p>Make audio tracks</p>
-                    </div>
-                </div>
-                <div class="list-row" onclick="selectTool('Canvas')">
-                    <span>📑</span>
-                    <div>
-                        <h4>Canvas</h4>
-                        <p>Code, write or make slides</p>
-                    </div>
-                </div>
-                <div class="list-row" onclick="selectTool('Deep Research')">
-                    <span>🌐</span>
-                    <div>
-                        <h4>Deep Research</h4>
-                        <p>Get detailed reports</p>
-                    </div>
-                </div>
-                <div class="list-row" onclick="selectTool('Guided Learning')">
-                    <span>📖</span>
-                    <div>
-                        <h4>Guided Learning</h4>
-                        <p>Get step-by-step help</p>
-                    </div>
-                </div>
+                <div class="tool-item" onclick="selectTool('Photos')">🖼️<br>Photos</div>
+                <div class="tool-item" onclick="selectTool('Camera')">📷<br>Camera</div>
+                <div class="tool-item" onclick="selectTool('Avatar')">😊<br>Avatar</div>
             </div>
         </div>
     </div>
 
     <script>
-        // Register Service Worker for PWA
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then((reg) => console.log('Service Worker registered', reg))
-                    .catch((err) => console.log('Service Worker registration failed', err));
-            });
-        }
-
         const plusBtn = document.getElementById('plusBtn');
         const menuOverlay = document.getElementById('menuOverlay');
         const chatContainer = document.getElementById('chatContainer');
@@ -305,28 +119,13 @@
         const drawerOverlay = document.getElementById('drawerOverlay');
         const drawerCloseBtn = document.getElementById('drawerCloseBtn');
 
-        menuToggleBtn.addEventListener('click', () => {
-            sideDrawer.classList.add('open');
-            drawerOverlay.style.display = 'block';
-        });
+        menuToggleBtn.onclick = () => { sideDrawer.classList.add('open'); drawerOverlay.style.display = 'block'; };
+        const closeDrawer = () => { sideDrawer.classList.remove('open'); drawerOverlay.style.display = 'none'; };
+        drawerCloseBtn.onclick = closeDrawer;
+        drawerOverlay.onclick = closeDrawer;
 
-        function closeDrawer() {
-            sideDrawer.classList.remove('open');
-            drawerOverlay.style.display = 'none';
-        }
-
-        drawerCloseBtn.addEventListener('click', closeDrawer);
-        drawerOverlay.addEventListener('click', closeDrawer);
-
-        plusBtn.addEventListener('click', () => {
-            menuOverlay.style.display = 'flex';
-        });
-
-        menuOverlay.addEventListener('click', (e) => {
-            if (e.target === menuOverlay) {
-                menuOverlay.style.display = 'none';
-            }
-        });
+        plusBtn.onclick = () => { menuOverlay.style.display = 'flex'; };
+        menuOverlay.onclick = (e) => { if (e.target === menuOverlay) menuOverlay.style.display = 'none'; };
 
         function startNewChat() {
             closeDrawer();
@@ -335,103 +134,68 @@
             welcomeScreen.style.display = 'flex';
             userInput.value = '';
         }
+        newChatBtn.onclick = startNewChat;
 
-        newChatBtn.addEventListener('click', startNewChat);
-
-        function selectDrawerItem(itemName) {
+        function selectDrawerItem(item) {
             closeDrawer();
             welcomeScreen.style.display = 'none';
             chatContainer.style.display = 'flex';
-            appendUserMsg(`Selected Menu: ${itemName}`);
-            setTimeout(() => {
-                appendAiMsg(`Ai Sameer: Opened ${itemName} successfully!`);
-            }, 500);
+            appendMsg(`Selected: ${item}`, 'user');
+            appendMsg(`Ai Sameer: Opened ${item} successfully!`, 'ai');
         }
 
-        function selectTool(toolName) {
+        function selectTool(tool) {
             menuOverlay.style.display = 'none';
             welcomeScreen.style.display = 'none';
             chatContainer.style.display = 'flex';
-            
-            appendUserMsg(`Selected Tool: ${toolName}`);
-            setTimeout(() => {
-                appendAiMsg(`Ai Sameer: ${toolName} pipeline is active and ready! (Daily limits active)`);
-            }, 500);
+            appendMsg(`Selected Tool: ${tool}`, 'user');
+            appendMsg(`Ai Sameer: ${tool} is ready!`, 'ai');
         }
 
-        userInput.addEventListener('keypress', function (e) {
+        userInput.onkeypress = (e) => {
             if (e.key === 'Enter' && userInput.value.trim() !== '') {
-                submitMessage(userInput.value);
+                let val = userInput.value;
+                userInput.value = '';
+                welcomeScreen.style.display = 'none';
+                chatContainer.style.display = 'flex';
+                appendMsg(val, 'user');
+                setTimeout(() => appendMsg(`Ai Sameer: Processing "${val}"`, 'ai'), 500);
             }
-        });
+        };
 
-        // Speech Recognition (Mic Feature)
-        micBtn.addEventListener('click', () => {
+        micBtn.onclick = () => {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                alert('Speech recognition is not supported in this browser.');
-                return;
-            }
-
+            if (!SpeechRecognition) { alert('Speech recognition not supported.'); return; }
             try {
-                const recognition = new SpeechRecognition();
-                recognition.lang = 'te-IN'; 
-                recognition.interimResults = false;
-                recognition.maxAlternatives = 1;
-
-                micBtn.style.color = '#3b82f6';
-                userInput.placeholder = "వింటున్నాను మాట్లాడండి... (Listening...)";
-
-                recognition.onresult = function(event) {
-                    const speechText = event.results[0][0].transcript;
-                    userInput.value = speechText;
-                    micBtn.style.color = '#cbd5e1';
+                const rec = new SpeechRecognition();
+                rec.lang = 'te-IN';
+                userInput.placeholder = "వింటున్నాను మాట్లాడండి...";
+                rec.onresult = (e) => {
+                    let text = e.results[0][0].transcript;
+                    userInput.value = text;
                     userInput.placeholder = "Ask Ai Sameer...";
-                    if (speechText.trim() !== '') {
-                        submitMessage(speechText);
+                    if(text) {
+                        welcomeScreen.style.display = 'none';
+                        chatContainer.style.display = 'flex';
+                        appendMsg(text, 'user');
+                        setTimeout(() => appendMsg(`Ai Sameer: Processing "${text}"`, 'ai'), 500);
                     }
                 };
+                rec.onerror = rec.onend = () => { userInput.placeholder = "Ask Ai Sameer..."; };
+                rec.start();
+            } catch(err) { alert('Microphone permission required.'); }
+        };
 
-                recognition.onerror = function() {
-                    micBtn.style.color = '#cbd5e1';
-                    userInput.placeholder = "Ask Ai Sameer...";
-                };
-
-                recognition.onend = function() {
-                    micBtn.style.color = '#cbd5e1';
-                    userInput.placeholder = "Ask Ai Sameer...";
-                };
-
-                recognition.start();
-            } catch (err) {
-                micBtn.style.color = '#cbd5e1';
-                userInput.placeholder = "Ask Ai Sameer...";
-                alert('Please allow microphone permissions.');
-            }
-        });
-
-        function submitMessage(text) {
-            welcomeScreen.style.display = 'none';
-            chatContainer.style.display = 'flex';
-            userInput.value = '';
-            appendUserMsg(text);
-            setTimeout(() => {
-                appendAiMsg(`Ai Sameer: Processing your request for "${text}". All AI pipelines are active!`);
-            }, 600);
-        }
-
-        function appendUserMsg(text) {
+        function appendMsg(text, sender) {
             const wrapper = document.createElement('div');
-            wrapper.className = 'message-wrapper user-wrapper';
-            
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'message user-msg';
-            msgDiv.innerText = text;
-            
-            wrapper.appendChild(msgDiv);
+            wrapper.className = `message-wrapper ${sender}-wrapper`;
+            const msg = document.createElement('div');
+            msg.className = `message ${sender}-msg`;
+            msg.innerText = text;
+            wrapper.appendChild(msg);
             chatContainer.appendChild(wrapper);
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
-
-        function appendAiMsg(text) {
-            const wrapper = documen
+    </script>
+</body>
+</html>
