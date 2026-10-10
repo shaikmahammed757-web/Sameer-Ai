@@ -47,6 +47,7 @@
             text-align: center;
             padding: 20px;
             overflow-y: auto;
+            position: relative;
         }
         .logo-icon {
             font-size: 32px;
@@ -59,7 +60,7 @@
             margin-top: 0;
             margin-bottom: 25px;
             font-weight: 400;
-            font-size: 28px;
+            font-size: 26px;
         }
         .features-grid {
             display: flex;
@@ -101,8 +102,9 @@
             color: #8b949e;
             font-size: 12px;
         }
-        /* Input Box matching Gemini Style */
+        /* Input Box */
         .input-box {
+            position: relative;
             display: flex;
             align-items: center;
             background-color: #171c28;
@@ -144,6 +146,37 @@
             cursor: pointer;
             font-size: 18px;
             padding: 5px;
+        }
+        /* Plus Options Popup Menu */
+        .plus-popup {
+            display: none;
+            position: absolute;
+            bottom: 75px;
+            left: 20px;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 16px;
+            width: 220px;
+            box-shadow: 0px 8px 24px rgba(0,0,0,0.5);
+            z-index: 100;
+            text-align: left;
+            overflow: hidden;
+        }
+        .plus-popup.show {
+            display: block;
+        }
+        .popup-item {
+            padding: 12px 15px;
+            font-size: 14px;
+            color: #ffffff;
+            cursor: pointer;
+            border-bottom: 1px solid #21262d;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .popup-item:hover {
+            background-color: #21262d;
         }
         /* Sidebar */
         .sidebar {
@@ -230,9 +263,18 @@
             </div>
         </div>
 
-        <!-- Input Box with Plus and Working Mic -->
+        <!-- Input Box with Plus Popup & Working Mic -->
         <div class="input-box">
-            <button class="plus-btn" onclick="alert('Plus options clicked')">+</button>
+            <button class="plus-btn" onclick="togglePlusMenu(event)">+</button>
+            
+            <!-- Popup Menu for Plus -->
+            <div id="plusPopup" class="plus-popup">
+                <div class="popup-item" onclick="alert('Upload Photo selected')">📷 Upload Photo</div>
+                <div class="popup-item" onclick="alert('Upload Video selected')">🎥 Upload Video</div>
+                <div class="popup-item" onclick="alert('Create Image selected')">🖼️ Text to Image</div>
+                <div class="popup-item" onclick="alert('Create Video selected')">🎬 Text to Video</div>
+            </div>
+
             <input type="text" id="userInput" placeholder="Ask Ai Sameer...">
             <div class="action-btns">
                 <button class="mic-btn" onclick="startVoiceRecognition()" title="Voice Input">🎤</button>
@@ -252,6 +294,22 @@
             document.getElementById('sidebar').classList.toggle('open');
         }
 
+        function togglePlusMenu(event) {
+            event.stopPropagation();
+            const popup = document.getElementById('plusPopup');
+            popup.classList.toggle('show');
+        }
+
+        // Close popup when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.plus-btn')) {
+                const popup = document.getElementById('plusPopup');
+                if (popup && popup.classList.contains('show')) {
+                    popup.classList.remove('show');
+                }
+            }
+        }
+
         function startVoiceRecognition() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
@@ -262,7 +320,11 @@
             try {
                 const recognition = new SpeechRecognition();
                 recognition.lang = 'te-IN'; // తెలుగు వాయిస్ రికగ్నిషన్
-                recognition.start();
+                recognition.interimResults = false;
+                
+                recognition.onstart = function() {
+                    console.log("Listening started...");
+                };
 
                 recognition.onresult = function(event) {
                     const speechToText = event.results[0][0].transcript;
@@ -270,8 +332,10 @@
                 };
 
                 recognition.onerror = function(event) {
-                    alert("మైక్ పర్మిషన్ లేదా నెట్‌వర్క్ సమస్య ఉంది. దయచేసి క్రోమ్ బ్రౌజర్‌లో మైక్ పర్మిషన్ చెక్ చేయండి.");
+                    alert("మైక్ పర్మిషన్ లేదా నెట్‌వర్క్ సమస్య ఉంది. క్రోమ్ బ్రౌజర్ సెట్టింగ్స్‌లో మైక్ పర్మిషన్ 'Allow' చేయండి.");
                 };
+
+                recognition.start();
             } catch (e) {
                 alert("మైక్ రన్ చేయడం కుదరలేదు.");
             }
