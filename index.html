@@ -21,7 +21,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
+            padding: 16px 20px;
             background-color: #0b0f19;
             flex-shrink: 0;
         }
@@ -35,36 +35,46 @@
         .header-title {
             font-size: 18px;
             font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         .main-container {
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
             text-align: center;
-            padding: 20px;
+            padding: 20px 16px;
+            box-sizing: border-box;
             position: relative;
         }
+        .center-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: auto;
+        }
         .gemini-sparkle {
-            font-size: 38px;
+            font-size: 42px;
             margin-bottom: 12px;
             background: linear-gradient(42deg, #4285F4, #9B72CB, #EA4335);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         .center-title {
-            font-size: 28px;
+            font-size: 30px;
             font-weight: 400;
             color: #ffffff;
-            margin-bottom: 0;
+            margin: 0;
         }
-        /* Bottom Input Box Container where all buttons reside together */
+        /* Bottom Input Box Container */
         .input-box-wrapper {
             position: relative;
-            width: 92%;
+            width: 100%;
             max-width: 650px;
-            margin-bottom: 25px;
             flex-shrink: 0;
         }
         .input-box {
@@ -72,7 +82,7 @@
             align-items: center;
             background-color: #171c28;
             border: 1px solid #2d3748;
-            padding: 8px 15px;
+            padding: 10px 18px;
             border-radius: 35px;
             width: 100%;
             box-sizing: border-box;
@@ -81,9 +91,9 @@
             background: transparent;
             border: none;
             color: #ffffff;
-            font-size: 22px;
+            font-size: 24px;
             cursor: pointer;
-            margin-right: 10px;
+            margin-right: 12px;
             display: flex;
             align-items: center;
         }
@@ -101,48 +111,90 @@
         .action-btns {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
         }
         .mic-btn, .send-btn {
             background: transparent;
             border: none;
             color: #ffffff;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 20px;
             padding: 5px;
             display: flex;
             align-items: center;
         }
-        /* Popup Menu properly positioned above input box */
+        /* Full Gemini Style Popup Menu */
         .plus-popup {
             display: none;
             position: absolute;
-            bottom: 65px;
+            bottom: 75px;
             left: 0;
-            background-color: #1a2234;
-            border: 1px solid #30363d;
-            border-radius: 16px;
-            width: 240px;
-            box-shadow: 0px 10px 30px rgba(0,0,0,0.8);
+            right: 0;
+            margin: 0 auto;
+            background-color: #161c2c;
+            border: 1px solid #2d3748;
+            border-radius: 24px;
+            width: 92%;
+            max-width: 420px;
+            max-height: 75vh;
+            overflow-y: auto;
+            box-shadow: 0px 15px 40px rgba(0,0,0,0.85);
             z-index: 1000;
             text-align: left;
-            overflow: hidden;
+            padding: 12px;
+            box-sizing: border-box;
         }
         .plus-popup.active {
             display: block;
         }
-        .popup-item {
-            padding: 14px 18px;
+        .popup-top-grid {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+            justify-content: space-between;
+        }
+        .popup-card-btn {
+            flex: 1;
+            background-color: #212c42;
+            border: none;
+            border-radius: 18px;
+            padding: 16px 10px;
+            color: white;
+            text-align: center;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+        .popup-card-btn:hover {
+            background-color: #2c3a56;
+        }
+        .popup-card-btn span.icon {
+            font-size: 22px;
+        }
+        .popup-list-item {
+            padding: 12px 14px;
             font-size: 14px;
             color: #ffffff;
             cursor: pointer;
-            border-bottom: 1px solid #21262d;
+            border-radius: 12px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
+            margin-bottom: 4px;
         }
-        .popup-item:hover {
-            background-color: #28334a;
+        .popup-list-item:hover {
+            background-color: #222d44;
+        }
+        .popup-list-item .item-icon {
+            font-size: 20px;
+        }
+        .popup-list-item .item-desc {
+            font-size: 12px;
+            color: #94a3b8;
+            display: block;
         }
         /* Sidebar */
         .sidebar {
@@ -184,7 +236,9 @@
 
     <header>
         <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-        <div class="header-title">Ai Sameer</div>
+        <div class="header-title">
+            <span>Ai Sameer</span> ▾
+        </div>
         <button class="top-icon-btn" onclick="location.reload()">✏️</button>
     </header>
 
@@ -202,20 +256,66 @@
     </div>
 
     <div class="main-container">
-        <div>
+        <div class="center-content">
             <div class="gemini-sparkle">✦</div>
             <div class="center-title">Ai Sameer</div>
         </div>
 
         <div class="input-box-wrapper">
+            <!-- Full Gemini Popup Menu -->
             <div id="plusPopup" class="plus-popup">
-                <div class="popup-item" onclick="selectOption('Upload Photo')">📷 Upload Photo</div>
-                <div class="popup-item" onclick="selectOption('Upload Video')">🎥 Upload Video</div>
-                <div class="popup-item" onclick="selectOption('Text to Image')">🖼️ Text to Image</div>
-                <div class="popup-item" onclick="selectOption('Text to Video')">🎬 Text to Video</div>
+                <div class="popup-top-grid">
+                    <button class="popup-card-btn" onclick="selectOption('Photos')">
+                        <span class="icon">🖼️</span>
+                        <span>Photos</span>
+                    </button>
+                    <button class="popup-card-btn" onclick="selectOption('Camera')">
+                        <span class="icon">📷</span>
+                        <span>Camera</span>
+                    </button>
+                    <button class="popup-card-btn" onclick="selectOption('Avatar')">
+                        <span class="icon">😊</span>
+                        <span>Avatar</span>
+                    </button>
+                </div>
+
+                <div class="popup-list-item" onclick="selectOption('Images')">
+                    <span class="item-icon">🎨</span>
+                    <div>
+                        <strong>Images</strong>
+                        <span class="item-desc">Create and edit images</span>
+                    </div>
+                </div>
+                <div class="popup-list-item" onclick="selectOption('Music')">
+                    <span class="item-icon">🎵</span>
+                    <div>
+                        <strong>Music</strong>
+                        <span class="item-desc">Make audio tracks</span>
+                    </div>
+                </div>
+                <div class="popup-list-item" onclick="selectOption('Canvas')">
+                    <span class="item-icon">📄</span>
+                    <div>
+                        <strong>Canvas</strong>
+                        <span class="item-desc">Code, write or make slides</span>
+                    </div>
+                </div>
+                <div class="popup-list-item" onclick="selectOption('Deep Research')">
+                    <span class="item-icon">🌐</span>
+                    <div>
+                        <strong>Deep Research</strong>
+                        <span class="item-desc">Get detailed reports</span>
+                    </div>
+                </div>
+                <div class="popup-list-item" onclick="selectOption('Guided Learning')">
+                    <span class="item-icon">📖</span>
+                    <div>
+                        <strong>Guided Learning</strong>
+                        <span class="item-desc">Get step-by-step help</span>
+                    </div>
+                </div>
             </div>
 
-            <!-- All buttons (Plus, Input, Mic, Send) are nicely packed inside this single search box -->
             <div class="input-box">
                 <button class="plus-btn" onclick="togglePlusMenu(event)">＋</button>
                 <input type="text" id="userInput" placeholder="Ask Ai Sameer">
