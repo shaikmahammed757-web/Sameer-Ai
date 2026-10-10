@@ -151,7 +151,7 @@
 
     <!-- Bottom Input Bar -->
     <div class="input-bar-wrapper">
-        <div class="input-bar">
+        1   <div class="input-bar">
             <button class="plus-btn" id="plusBtn">+</button>
             <input type="text" class="text-input" id="userInput" placeholder="Ask Ai Sameer...">
             <button class="mic-btn" id="micBtn" title="Voice Input">🎙️</button>
@@ -295,44 +295,49 @@
             }
         });
 
-        // Speech Recognition (Mic Feature)
+        // Fixed Speech Recognition (Microphone Feature)
         micBtn.addEventListener('click', () => {
-            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                alert('Speech recognition is not supported in this browser.');
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert('Speech recognition is not supported on this browser/device. Please use Google Chrome.');
                 return;
             }
 
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            const recognition = new SpeechRecognition();
-            
-            recognition.lang = 'te-IN'; 
-            recognition.interimResults = false;
-            recognition.maxAlternatives = 1;
+            try {
+                const recognition = new SpeechRecognition();
+                recognition.lang = 'te-IN'; 
+                recognition.interimResults = false;
+                recognition.maxAlternatives = 1;
 
-            micBtn.style.color = '#3b82f6';
-            userInput.placeholder = "వింటున్నాను మాట్లాడండి... (Listening...)";
+                micBtn.style.color = '#3b82f6';
+                userInput.placeholder = "వింటున్నాను మాట్లాడండి... (Listening...)";
 
-            recognition.start();
+                recognition.start();
 
-            recognition.onresult = function(event) {
-                const speechText = event.results[0][0].transcript;
-                userInput.value = speechText;
+                recognition.onresult = function(event) {
+                    const speechText = event.results[0][0].transcript;
+                    userInput.value = speechText;
+                    micBtn.style.color = '#cbd5e1';
+                    userInput.placeholder = "Ask Ai Sameer...";
+                    if (speechText.trim() !== '') {
+                        submitMessage(speechText);
+                    }
+                };
+
+                recognition.onerror = function(event) {
+                    micBtn.style.color = '#cbd5e1';
+                    userInput.placeholder = "Ask Ai Sameer...";
+                };
+
+                recognition.onend = function() {
+                    micBtn.style.color = '#cbd5e1';
+                    userInput.placeholder = "Ask Ai Sameer...";
+                };
+            } catch (error) {
                 micBtn.style.color = '#cbd5e1';
                 userInput.placeholder = "Ask Ai Sameer...";
-                if (speechText.trim() !== '') {
-                    submitMessage(speechText);
-                }
-            };
-
-            recognition.onerror = function() {
-                micBtn.style.color = '#cbd5e1';
-                userInput.placeholder = "Ask Ai Sameer...";
-            };
-
-            recognition.onend = function() {
-                micBtn.style.color = '#cbd5e1';
-                userInput.placeholder = "Ask Ai Sameer...";
-            };
+                alert('Microphone access error. Please check permissions.');
+            }
         });
 
         function submitMessage(text) {
