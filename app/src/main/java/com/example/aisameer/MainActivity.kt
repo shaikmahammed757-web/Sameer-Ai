@@ -265,7 +265,7 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                     margin-top: 8px;
                 }
                 
-                /* పాపప్ మోడల్ (Photos, Camera, Avatar etc.) */
+                /* పాపప్ మోడల్ */
                 .modal {
                     position: fixed;
                     bottom: 0;
@@ -344,7 +344,6 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                 </div>
             </div>
 
-            <!-- అడ్వాన్స్‌డ్ ఆప్షన్స్ పాపప్ (Photos, Camera, Avatar, Images, Music, Canvas, Deep Research) -->
             <div class="modal" id="actionModal">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                     <b>Explore AI Features</b>
@@ -353,7 +352,7 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                 <div class="modal-item" onclick="runAIAction('image')">🖼️ Images (Create & Edit)</div>
                 <div class="modal-item" onclick="runAIAction('txt2vid')">🎥 Text to Video (4/day limit)</div>
                 <div class="modal-item" onclick="runAIAction('music')">🎵 Music (Make audio tracks)</div>
-                <div class="modal-item" onclick="runAIAction('canvas')">📝 Canvas (Code, write or make slides)</div>
+                <div class="modal-item" onclick="runAIAction('canvas')">📝 Canvas (Code, write or slides)</div>
                 <div class="modal-item" onclick="runAIAction('research')">🔍 Deep Research (Get detailed reports)</div>
             </div>
 
@@ -454,4 +453,6 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                     }
                 }
 
-           
+                function updateHistoryUI() {
+                    var listDiv = document.getElementById('historyList');
+                    if (chatHistoryList
