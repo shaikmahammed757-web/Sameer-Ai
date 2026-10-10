@@ -1,3 +1,153 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Ai Sameer - Your Personal AI Assistant</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0b0f19">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #0b0f19; color: #ffffff; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        
+        /* App Header */
+        header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: rgba(11, 15, 25, 0.95); border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .menu-icon { font-size: 20px; cursor: pointer; color: #fff; }
+        .model-selector { display: flex; align-items: center; gap: 6px; font-size: 16px; font-weight: 600; color: #fff; cursor: pointer; }
+        .header-right { font-size: 20px; cursor: pointer; color: #fff; }
+
+        /* Welcome Center Screen */
+        .welcome-screen { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; gap: 16px; }
+        .sparkle-logo { font-size: 40px; background: linear-gradient(135deg, #3b82f6, #ec4899, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .welcome-screen h2 { font-size: 26px; font-weight: 500; color: #f8fafc; }
+
+        /* Chat Container */
+        .chat-container { flex: 1; overflow-y: auto; padding: 16px; display: none; flex-direction: column; gap: 12px; }
+        .message { max-width: 80%; padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.5; }
+        .ai-msg { background: #1e293b; align-self: flex-start; border-bottom-left-radius: 4px; }
+        .user-msg { background: #3b82f6; align-self: flex-end; border-bottom-right-radius: 4px; }
+
+        /* Input Bar */
+        .input-bar-wrapper { padding: 12px 16px; background: #0b0f19; padding-bottom: calc(12px + env(safe-area-inset-bottom)); }
+        .input-bar { display: flex; align-items: center; background: #161f30; border-radius: 28px; padding: 8px 12px; border: 1px solid rgba(255, 255, 255, 0.08); gap: 8px; }
+        .plus-btn { background: none; border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; font-size: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .text-input { flex: 1; background: none; border: none; padding: 8px; color: #fff; font-size: 15px; outline: none; }
+        .mic-btn { background: none; border: none; color: #cbd5e1; font-size: 18px; cursor: pointer; padding: 0 4px; display: flex; align-items: center; justify-content: center; }
+        .wave-btn { background: #3b82f6; color: #fff; border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; }
+
+        /* Advanced Tools Popup Menu */
+        .menu-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; z-index: 100; align-items: flex-end; }
+        .menu-sheet { width: 100%; background: #161f30; border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 20px; max-height: 75vh; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        
+        .sheet-header { width: 40px; height: 4px; background: #475569; border-radius: 2px; align-self: center; margin-bottom: 5px; }
+        .tools-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; text-align: center; }
+        .tool-item { background: #1e293b; padding: 14px 10px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); }
+        .tool-item span { font-size: 12px; color: #cbd5e1; }
+        .tool-icon { font-size: 20px; }
+
+        .list-options { display: flex; flex-direction: column; gap: 8px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px; }
+        .list-row { display: flex; align-items: center; gap: 14px; padding: 10px 12px; border-radius: 12px; background: #1e293b; cursor: pointer; }
+        .list-row div h4 { font-size: 14px; color: #fff; }
+        .list-row div p { font-size: 11px; color: #94a3b8; }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="header-left">
+            <span class="menu-icon">☰</span>
+            <div class="model-selector">
+                <span>Ai Sameer Pro</span>
+                <span style="font-size: 12px; color: #94a3b8;">▼</span>
+            </div>
+        </div>
+        <div class="header-right">✏️</div>
+    </header>
+
+    <!-- Welcome Center Screen -->
+    <div class="welcome-screen" id="welcomeScreen">
+        <div class="sparkle-logo">✨</div>
+        <h2>Where should we start?</h2>
+    </div>
+
+    <!-- Chat Container -->
+    <div class="chat-container" id="chatContainer"></div>
+
+    <!-- Bottom Input Bar -->
+    <div class="input-bar-wrapper">
+        <div class="input-bar">
+            <button class="plus-btn" id="plusBtn">+</button>
+            <input type="text" class="text-input" id="userInput" placeholder="Ask Ai Sameer...">
+            <button class="mic-btn" id="micBtn" title="Voice Input">🎙️</button>
+            <button class="wave-btn" id="waveBtn" title="Audio Wave">📊</button>
+        </div>
+    </div>
+
+    <!-- Advanced Tools Menu Sheet -->
+    <div class="menu-overlay" id="menuOverlay">
+        <div class="menu-sheet">
+            <div class="sheet-header"></div>
+            
+            <!-- Top Grid Tools -->
+            <div class="tools-grid">
+                <div class="tool-item" onclick="selectTool('Photos')">
+                    <div class="tool-icon">🖼️</div>
+                    <span>Photos</span>
+                </div>
+                <div class="tool-item" onclick="selectTool('Camera')">
+                    <div class="tool-icon">📷</div>
+                    <span>Camera</span>
+                </div>
+                <div class="tool-item" onclick="selectTool('Avatar')">
+                    <div class="tool-icon">😊</div>
+                    <span>Avatar</span>
+                </div>
+            </div>
+
+            <!-- Detailed List Features -->
+            <div class="list-options">
+                <div class="list-row" onclick="selectTool('Images')">
+                    <span>🌙</span>
+                    <div>
+                        <h4>Images</h4>
+                        <p>Create and edit images</p>
+                    </div>
+                </div>
+                <div class="list-row" onclick="selectTool('Music')">
+                    <span>🎵</span>
+                    <div>
+                        <h4>Music</h4>
+                        <p>Make audio tracks</p>
+                    </div>
+                </div>
+                <div class="list-row" onclick="selectTool('Canvas')">
+                    <span>📑</span>
+                    <div>
+                        <h4>Canvas</h4>
+                        <p>Code, write or make slides</p>
+                    </div>
+                </div>
+                <div class="list-row" onclick="selectTool('Deep Research')">
+                    <span>🌐</span>
+                    <div>
+                        <h4>Deep Research</h4>
+                        <p>Get detailed reports</p>
+                    </div>
+                </div>
+                <div class="list-row" onclick="selectTool('Guided Learning')">
+                    <span>📖</span>
+                    <div>
+                        <h4>Guided Learning</h4>
+                        <p>Get step-by-step help</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         const plusBtn = document.getElementById('plusBtn');
         const menuOverlay = document.getElementById('menuOverlay');
@@ -27,10 +177,6 @@
             }, 500);
         }
 
-        function selectRowTool(toolName) {
-            selectTool(toolName);
-        }
-
         userInput.addEventListener('keypress', function (e) {
             if (e.key === 'Enter' && userInput.value.trim() !== '') {
                 submitMessage(userInput.value);
@@ -40,19 +186,18 @@
         // Speech Recognition (Mic Feature)
         micBtn.addEventListener('click', () => {
             if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                alert('Speech recognition is not supported in this browser. Please use Chrome or Android webview.');
+                alert('Speech recognition is not supported in this browser.');
                 return;
             }
 
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             const recognition = new SpeechRecognition();
             
-            // Telugu and English support
             recognition.lang = 'te-IN'; 
             recognition.interimResults = false;
             recognition.maxAlternatives = 1;
 
-            micBtn.style.color = '#3b82f6'; // Highlight mic when listening
+            micBtn.style.color = '#3b82f6';
             userInput.placeholder = "వింటున్నాను మాట్లాడండి... (Listening...)";
 
             recognition.start();
@@ -67,7 +212,7 @@
                 }
             };
 
-            recognition.onerror = function(event) {
+            recognition.onerror = function() {
                 micBtn.style.color = '#cbd5e1';
                 userInput.placeholder = "Ask Ai Sameer...";
             };
@@ -96,4 +241,5 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
     </script>
-    
+</body>
+</html>
